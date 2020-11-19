@@ -24,7 +24,7 @@ public class FailedDetected {
 								for (int k = 0; k < board.getBaggsSize(); k++) {
 									Baggage item3 = board.getBaggs(k);
 									if (!item3.equals(bag) && item2.isBottomCollision(item3) || item2.isTopCollision(item3)) { // item3는 item2 아래의 bag
-
+										System.out.println("1");
 										return true;
 									}
 								}
@@ -33,7 +33,7 @@ public class FailedDetected {
 					}
 				}
 				if (board.getCheckWallCollision(bag, Board.LEFT_COLLISION) || board.getCheckWallCollision(bag, Board.RIGHT_COLLISION)) {
-
+					System.out.println("2");
 					return true;
 				}
 			}
@@ -54,6 +54,7 @@ public class FailedDetected {
 									Baggage item3 = board.getBaggs(k);
 									if (!item3.equals(bag) && item2.isRightCollision(item3)
 											|| item2.isLeftCollision(item3)) {
+										System.out.println("3");
 										return true;
 									}
 								}
@@ -76,8 +77,10 @@ public class FailedDetected {
 									Baggage item3 = board.getBaggs(k);
 
 									if (!item3.equals(item1) && !item3.equals(bag)) { // item3는 item2(벽) 양 옆의 객체
-										if (item2.isLeftCollision(item3) || item2.isRightCollision(item3))
+										if (item2.isLeftCollision(item3) || item2.isRightCollision(item3)) {
+											System.out.println("4");
 											return true;
+										}
 
 										if (bag.isTopCollision(item2) && item1.isBottomCollision(item3)
 												|| bag.isBottomCollision(item2) && item1.isTopCollision(item3)) {
@@ -85,6 +88,7 @@ public class FailedDetected {
 												Wall item4 = board.getWalls(h);
 												if (!item4.equals(item2) && item3.isRightCollision(item4)
 														|| item3.isLeftCollision(item4)) {
+													System.out.println("5");
 													return true;
 												}
 											}
@@ -111,8 +115,10 @@ public class FailedDetected {
 									Baggage item3 = board.getBaggs(k);
 
 									if (!item3.equals(item1) && !item3.equals(bag)) {
-										if (item2.isTopCollision(item3) || item2.isRightCollision(item3))
+										if (item2.isTopCollision(item3) || item2.isRightCollision(item3)) {
+											System.out.println("6");
 											return true;
+										}
 
 										if (bag.isRightCollision(item2) && item1.isLeftCollision(item3)
 												|| bag.isLeftCollision(item2) && item1.isRightCollision(item3)) {
@@ -120,6 +126,7 @@ public class FailedDetected {
 												Wall item4 = board.getWalls(h);
 												if (!item4.equals(item2) && item3.isTopCollision(item4)
 														|| item3.isBottomCollision(item4)) {
+													System.out.println("7");
 													return true;
 												}
 											}
@@ -149,7 +156,7 @@ public class FailedDetected {
 									Baggage item3 = board.getBaggs(k);
 
 									if (item2.isBottomCollision(item3)) {
-
+										System.out.println("9");
 										return true;
 									}
 								}
@@ -176,7 +183,7 @@ public class FailedDetected {
 									Baggage item3 = board.getBaggs(k);
 
 									if (item2.isTopCollision(item3)) {
-
+										System.out.println("10");
 										return true;
 									}
 								}
