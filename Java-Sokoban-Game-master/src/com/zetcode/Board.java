@@ -172,7 +172,7 @@ public class Board extends JPanel {
 		initBoard();
 	}
 
-	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, Replay replay, String selectCharacter) {
+	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, Replay replay, String selectCharacter) { // 리플레이 일때
 
 		setLayout(null);
 		
