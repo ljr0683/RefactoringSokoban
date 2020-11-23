@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 
 public class FileIO {
-	private Deque<Integer> replay_Queue = new LinkedList<Integer>();
+	private Deque<Integer> replay_Deque = new LinkedList<Integer>();
 	private String filePath;
 	private String folderPath;
 	FileWriter fw = null;
@@ -37,9 +37,9 @@ public class FileIO {
 			if(!folder.exists())
 					folder.mkdir();
 			fw = new FileWriter(file,false);
-			int size = replay_Queue.size();
+			int size = replay_Deque.size();
 			for(int j=0; j<size; j++) {
-				fw.write(Integer.toString(replay_Queue.poll()));
+				fw.write(Integer.toString(replay_Deque.poll()));
 			}
 			fw.flush();
 			fw.close();
@@ -49,7 +49,7 @@ public class FileIO {
 	}
 	
 	public void enqueue(int i) {
-		replay_Queue.offer(i);
+		replay_Deque.offer(i);
 	}
 	
 	public String getFilePath() {

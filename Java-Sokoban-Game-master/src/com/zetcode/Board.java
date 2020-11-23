@@ -3,9 +3,6 @@ package com.zetcode;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -13,7 +10,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import javax.swing.ImageIcon;
@@ -23,7 +19,7 @@ import javax.swing.Timer;
 
 public class Board extends JPanel {
 
-	private Deque<Integer> replay_Deque = new LinkedList<>();
+	private Deque<Integer> replay_Deque = new LinkedList<>(); 
 
 	private int undoCount = 3;
 	private int moveCount;
@@ -31,7 +27,6 @@ public class Board extends JPanel {
 	private int timerCount;
 	private UIManager frame;
 	private LevelSelectPanel previousPanel;
-	private LevelPanel levelpanel;
 	private Baggage bags = null;
 	private File file;
 	private Replay replay;
@@ -39,13 +34,12 @@ public class Board extends JPanel {
 	private MyTimer time;
 	private Timer timer;
 	private CheckCollision checkCollision;
+	private Score score;
 	
 	private ImageIcon backSpaceIcon = new ImageIcon("src/resources/BackSpace/BackSpace.png");
 	private JLabel backSpaceLabel = new JLabel(backSpaceIcon);
 	private ImageIcon[] boomImage = new ImageIcon[3];
 	private JLabel[] boomLabel = new JLabel[3];
-	
-	private Score score;
 	
 	private int size;
 	private boolean isCollision = false;
@@ -136,7 +130,7 @@ public class Board extends JPanel {
           + "        ### !! # \n"
           + "          #    # \n"
           + "          ###### \n"
- 
+          
           };
 	
 	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, String selectCharacter, int mode) {
@@ -161,18 +155,18 @@ public class Board extends JPanel {
 		
 		backSpaceLabel.addMouseListener(new MyMouseListener()); 
 		backSpaceLabel.setBounds(25, 20, 128, 128);
-		failed = new FailedDetected(this);
-		checkCollision = new CheckCollision(this);
+		
 		time = new MyTimer();
 		
 		this.mode = mode;
 		
 		limitturn = 500;
 	
+		addKeyListener(new PlayKeyAdapter(this, time, mode, timer));
 		initBoard();
 	}
 
-	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, Replay replay, String selectCharacter) { // 리플레이 일때
+	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, Replay replay, String selectCharacter, ReplayKeyAdapter replayKeyAdapter) { // 리플레이 일때
 
 		setLayout(null);
 		
@@ -198,12 +192,12 @@ public class Board extends JPanel {
 		}
 		
 		this.replay = replay;
-		failed = new FailedDetected(this);
-		checkCollision = new CheckCollision(this);
+		
 		time = new MyTimer();
 		
 		isReplay = true;
 		
+		addKeyListener(replayKeyAdapter);
 		initBoard();
 		
 	}
@@ -220,17 +214,10 @@ public class Board extends JPanel {
 		});
 		timer.start();
 		
-		addKeyListener(new TAdapter());
+		failed = new FailedDetected(this);
+		checkCollision = new CheckCollision(this);
 		setFocusable(true);
 		initWorld();
-	}
-
-	public int getBoardWidth() {
-		return this.w;
-	}
-
-	public int getBoardHeight() {
-		return this.h;
 	}
 
 	private void initWorld() { // 초기화
@@ -373,8 +360,6 @@ public class Board extends JPanel {
 		
 		if(mode==3) {
 			if(limitturn <= moveCount) {
-				System.out.println(limitturn);
-				System.out.println(moveCount);
 				isFailed();
 	    	}
         }
@@ -400,7 +385,7 @@ public class Board extends JPanel {
 		if(!(mode==4)) {
 		g.setColor(Color.BLUE);
 		String nowTurn = Integer.toString(moveCount);
-		g.drawString("MoveCount : "+nowTurn,  w-90, 60);
+		g.drawString("MoveCount : " + nowTurn,  w-90, 60);
 		}
 	}
 	
@@ -413,267 +398,7 @@ public class Board extends JPanel {
 		buildWorld(g);
 	}
 
-	private class TAdapter extends KeyAdapter { // 키값을 클래스에 넘겨줌
-		
-		@Override
-		public void keyPressed(KeyEvent e) {
-			if(!isReplay) {
-				for(int i=0; i<3; i++) {
-					boomLabel[i].setVisible(false);
-				}
-			}
-			if (isCompleted) { // 게임이 끝남.
-				
-				return;
-			}
-
-			if (isFailed) {
-				timer.stop();
-				return;
-			}
-
-			if (!isReplay) {
-				int key = e.getKeyCode();
-				flag=false;
-
-				switch (key) {
-
-				case KeyEvent.VK_LEFT:
-					
-					moveCount++;
-					
-					if (checkCollision.checkWallCollision(soko, LEFT_COLLISION)) { // soko객체 왼쪽에 벽이 있다면 움직이지 않고 키 이벤트를 끝냄
-						return;
-					}
-
-					if (checkCollision.checkBagCollision(LEFT_COLLISION)) {
-						// 왼쪽으로 움직였을때, soko객체 왼쪽에 bag객체가 존재하고 또 왼쪽에 또다른 Bag 객체가 존재하거나,
-						// soko 객체 왼쪽 Bag 객체의 왼쪽에 Wall 객체가 존재하면 움직이지 않고 이벤트 종료
-						return;
-					}
-
-					soko.move(-SPACE, 0); // 만약 위 상황을 만족하지 않는다면 왼쪽으로 한칸 움직임.
-					soko.changePlayerVector(LEFT_COLLISION);
-					
-					if (flag) {
-						if (!isCollision) {
-							replay_Deque.offer(5);
-						}
-						isCollision = true;
-					} else {
-						if (isCollision) {
-							replay_Deque.offer(6);
-						}
-
-						isCollision = false;
-					}
-
-					replay_Deque.offer(LEFT_COLLISION);
-
-					if (bags != null) {
-						isEntered(bags);
-						if (bags.getIsEntered()) {
-							break;
-						}
-					}
-
-					if (failed.isFailedDetected(bags)) {
-						isFailed();
-					}
-
-					break;
-
-				case KeyEvent.VK_RIGHT:
-
-					moveCount++;
-					
-					if (checkCollision.checkWallCollision(soko, RIGHT_COLLISION)) {
-						return;
-					}
-
-					if (checkCollision.checkBagCollision(RIGHT_COLLISION)) {
-						return;
-					}
-
-					soko.move(SPACE, 0);
-					soko.changePlayerVector(RIGHT_COLLISION);
-
-					if (flag) {
-						if (!isCollision) {
-							replay_Deque.offer(5);
-						}
-						isCollision = true;
-					} else {
-						if (isCollision) {
-							replay_Deque.offer(6);
-						}
-
-						isCollision = false;
-					}
-
-					replay_Deque.offer(RIGHT_COLLISION);
-
-					if (bags != null) {
-						isEntered(bags);
-						if (bags.getIsEntered()) {
-							break;
-						}
-					}
-
-					if (failed.isFailedDetected(bags)) {
-						isFailed();
-					}
-
-					break;
-
-				case KeyEvent.VK_UP:
-
-					moveCount++;
-					
-					if (checkCollision.checkWallCollision(soko, TOP_COLLISION)) {
-						return;
-					}
-
-					if (checkCollision.checkBagCollision(TOP_COLLISION)) {
-						return;
-					}
-
-					soko.move(0, -SPACE);
-					soko.changePlayerVector(TOP_COLLISION);
-
-					if (flag) {
-						if (!isCollision) {
-							replay_Deque.offer(5);
-						}
-						isCollision = true;
-					} else {
-						if (isCollision) {
-							replay_Deque.offer(6);
-						}
-
-						isCollision = false;
-					}
-
-					replay_Deque.offer(TOP_COLLISION);
-
-					if (bags != null) {
-						isEntered(bags);
-						if (bags.getIsEntered()) {
-							break;
-						}
-					}
-
-					if (failed.isFailedDetected(bags)) {
-						isFailed();
-					}
-
-					break;
-
-				case KeyEvent.VK_DOWN:
-
-					moveCount++;
-
-					if (checkCollision.checkWallCollision(soko, BOTTOM_COLLISION)) {
-						return;
-					}
-
-					if (checkCollision.checkBagCollision(BOTTOM_COLLISION)) {
-						return;
-					}
-
-					soko.move(0, SPACE);
-					soko.changePlayerVector(BOTTOM_COLLISION);
-
-					if (flag) {
-						if (!isCollision) {
-							replay_Deque.offer(5);
-						}
-						isCollision = true;
-					} else {
-						if (isCollision) {
-							replay_Deque.offer(6);
-						}
-
-						isCollision = false;
-					}
-
-					replay_Deque.offer(BOTTOM_COLLISION);
-
-					if (bags != null) {
-						isEntered(bags);
-						if (bags.getIsEntered()) {
-							break;
-						}
-					}
-
-					if (failed.isFailedDetected(bags)) {
-						isFailed();
-					}
-
-					break;
-
-				case KeyEvent.VK_R:
-					time.time = 0;
-					moveCount = 0;
-					restartLevel();
-
-					break;
-					
-				case KeyEvent.VK_BACK_SPACE :
-					if(!replay_Deque.isEmpty() ) {
-						if(undoCount>0) {
-							undo();
-							undoCount--;
-						}
-						
-					}
-					
-					break;
-
-				default:
-					break;
-				}
-				Iterator<Wall> iter = walls.iterator();// 이 부분부터
-				
-				if (mode == 2) {
-
-					if (moveCount > 0)
-
-						for (int i = 0; i < walls.size(); i++) {
-							Wall next = iter.next();
-
-							if (next instanceof Llm && moveCount >= 1) {
-								((Llm) next).rellm();
-							}
-						}
-				} // 이부분까지 설정
-
-				isCompleted();
-				repaint();
-			} else {
-
-				int key1 = e.getKeyCode();
-
-				switch (key1) { 
-
-				case KeyEvent.VK_LEFT:
-					replay.goBack();
-					break;
-
-				case KeyEvent.VK_RIGHT:
-					replay.goAhead();
-					break;
-
-				default:
-					break;
-				}
-				isCompleted();
-				repaint();
-			}
-		}
-	}
-
-	public void isCompleted() { // 다 최종지점에 넣었을경우 isCompleted=true
+	public void isCompleted() { // 다 최종지점에 넣었을경우 isCompleted=true Replay에서 사용중
 		
 		int nOfBags = baggs.size(); // Bag 객체의 숫자
 		int finishedBags = 0; // Bag객체의 숫자와 finishedBags가 isCompleted=ture == 게임 종료
@@ -707,7 +432,6 @@ public class Board extends JPanel {
 			
 			replayFileIo.replayFileInput(levelSelected, s);
 			
-			 
 			if(!isReplay) { // replay가 아닐떄만 스코어 계산
 				this.timerCount = time.getTime();
 				time.setIsFinished(true);
@@ -720,6 +444,7 @@ public class Board extends JPanel {
 			
 			isCompleted = true; // 따라서 끝남
 			
+			
 			ImageIcon completeImage = new ImageIcon("src/resources/Complete & Failed/Complete.png");
 			JLabel completeLabel = new JLabel(completeImage);
 			
@@ -730,7 +455,7 @@ public class Board extends JPanel {
 		}
 	}
 
-	public void isFailed() {
+	private void isFailed() { 
 		
 		isFailed = true;
 		
@@ -828,6 +553,10 @@ public class Board extends JPanel {
 		return walls.get(i);
 	}
 	
+	public Area getArea(int i) {
+		return areas.get(i);
+	}
+	
 	public Baggage getBags() {
 		return bags;
 	}
@@ -842,16 +571,15 @@ public class Board extends JPanel {
 		return soko;
 	}
 	
-	public void callIsEntered(Baggage bags) {
+	public void callIsEntered(Baggage bags) { //Replay에서 사용
 		isEntered(bags);
 	}
 	
-	public void callIsFailed() {
-		isFailed();
-	}
-	
-	public boolean callIsFailedDetected(Baggage bags) {
-		return failed.isFailedDetected(bags);
+	public void callIsFailedDetected(Baggage bags) { //Replay에서 사용
+		if(failed.isFailedDetected(bags)) {
+			isFailed();
+		}
+		return;
 	}
 	
 	public int getBaggsSize() {
@@ -866,6 +594,70 @@ public class Board extends JPanel {
 		this.flag = flag;
 	}
 	
+	public boolean getIsCompleted() {
+		return isCompleted;
+	}
+	
+	public boolean getIsFailed() {
+		return isFailed;
+	}
+	
+	public void callRestartLevel() {
+		restartLevel();
+	}
+	
+	public int getBoardWidth() {
+		return this.w;
+	}
+
+	public int getBoardHeight() {
+		return this.h;
+	}
+	
+	public void setMoveCount(int moveCount) {
+		this.moveCount = moveCount;
+	}
+	
+	public void increaseMoveCount() {
+		this.moveCount++;
+	}
+	
+	public int getMoveCount() {
+		return moveCount;
+	}
+	
+	public void replayDequeOffer(int keyDirection) {
+		replay_Deque.offer(keyDirection);
+	}
+	
+	public void callIsFailed() {
+		isFailed();
+	}
+	
+	public void callIsCompleted() {
+		isCompleted();
+	}
+	
+	public boolean getReplayDequeEmpty() {
+		if(replay_Deque.isEmpty()) 
+			return true;
+		return false;
+	}
+	
+	public ArrayList<Wall> getWallsArrayList(){
+		return walls;
+	}
+	
+	public int getUndoCount() {
+		undoCount--;
+		return undoCount;
+	}
+	
+	public void callUndo() {
+		undo();
+	}
+	
+	
 	class MyMouseListener extends MouseAdapter{
 		public void mouseClicked(MouseEvent e) {
 			JLabel la = (JLabel)e.getSource();
@@ -875,7 +667,6 @@ public class Board extends JPanel {
 				isFailed = false;
 				time.notMoveTime = 0;
 				moveCount=0;
-				
 			}
 		}
 	}

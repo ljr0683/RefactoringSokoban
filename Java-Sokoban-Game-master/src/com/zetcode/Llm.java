@@ -33,9 +33,7 @@ public class Llm extends Wall {
 	}
 
 	public void rellm() {
-		
 		setImage(null);
-		
 	}
 
 

@@ -24,7 +24,6 @@ public class FailedDetected {
 								for (int k = 0; k < board.getBaggsSize(); k++) {
 									Baggage item3 = board.getBaggs(k);
 									if (!item3.equals(bag) && item2.isBottomCollision(item3) || item2.isTopCollision(item3)) { // item3는 item2 아래의 bag
-										System.out.println("1");
 										return true;
 									}
 								}
@@ -33,7 +32,6 @@ public class FailedDetected {
 					}
 				}
 				if (board.getCheckWallCollision(bag, Board.LEFT_COLLISION) || board.getCheckWallCollision(bag, Board.RIGHT_COLLISION)) {
-					System.out.println("2");
 					return true;
 				}
 			}
@@ -96,7 +94,6 @@ public class FailedDetected {
 									}
 								}
 							}
-
 						}
 					}
 				}

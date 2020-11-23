@@ -28,19 +28,14 @@ public class Replay {
 			e.printStackTrace();
 		}
 		
-		createBoard(levelSelected, previousPanel, frame, file, selectCharacter);
+		
+		ReplayKeyAdapter replayKeyAdapter = new ReplayKeyAdapter(levelSelected, previousPanel, frame, file, selectCharacter, this);
+		board = replayKeyAdapter.getBoard();
 	}
 	
 	Replay(Board board){
 		this.board=board;
 		undo = true;
-	}
-	
-	private void createBoard(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, String selectCharacter) {
-		board = new Board(levelSelected, previousPanel, frame, file, this, selectCharacter);
-		int width = board.getBoardWidth();
-		int height = board.getBoardHeight();
-		frame.changePanel(board, width, height);
 	}
 	
 	public void goBack() {
@@ -97,6 +92,7 @@ public class Replay {
 		switch (key3) {
 		case Board.LEFT_COLLISION:
 			if (board.getIsCollision()) {
+				System.out.println(board.getIsCollision());
 				for(int i=0; i<board.getBaggsSize(); i++) {
 					Baggage collisionBag = board.getBaggs(i);
 					if(board.getSoko().isLeftCollision(collisionBag))
@@ -118,7 +114,6 @@ public class Replay {
 					if(board.getSoko().isRightCollision(collisionBag))
 						board.setBags(collisionBag);
 				}
-				
 				board.getBags().move(-Board.SPACE, 0);
 			}
 
@@ -209,6 +204,7 @@ public class Replay {
 	}
 	
 	public void DoingGoAhead(int key2) {
+		System.out.println(key2);
 		switch (key2) {
 
 		case Board.LEFT_COLLISION:
@@ -231,9 +227,7 @@ public class Replay {
 				}
 			}
 			
-			if (board.callIsFailedDetected(board.getBags())) {
-				board.callIsFailed();
-			}
+			board.callIsFailedDetected(board.getBags());
 			
 
 			break;
@@ -258,10 +252,7 @@ public class Replay {
 				}
 			}
 
-			
-			if (board.callIsFailedDetected(board.getBags())) {
-				board.callIsFailed();
-			}
+			board.callIsFailedDetected(board.getBags());
 			
 			break;
 
@@ -285,12 +276,8 @@ public class Replay {
 				}
 			}
 
-		
-			if (board.callIsFailedDetected(board.getBags())) {
-				board.callIsFailed();
-			}
+			board.callIsFailedDetected(board.getBags());
 			
-
 			break;
 
 		case Board.BOTTOM_COLLISION:
@@ -312,12 +299,8 @@ public class Replay {
 				}
 			}
 
+			board.callIsFailedDetected(board.getBags());
 			
-			if (board.callIsFailedDetected(board.getBags())) {
-				board.callIsFailed();
-			}
-			
-
 			break;
 		
 		default :
