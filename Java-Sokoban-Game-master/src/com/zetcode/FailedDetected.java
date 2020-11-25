@@ -42,8 +42,8 @@ public class FailedDetected {
 				return true;
 			}
 		}
-		wallLeftRightCollison(bag);
-		return false;
+		
+		return wallLeftRightCollison(bag);
 	}
 	
 	private boolean wallLeftRightCollison(Baggage bag) {
@@ -71,8 +71,8 @@ public class FailedDetected {
 				}
 			}
 		}
-		oneWallTopOrBottom(bag);
-		return false;
+		
+		return oneWallTopOrBottom(bag);
 	}
 	
 	private boolean oneWallTopOrBottom(Baggage bag) {
@@ -82,8 +82,8 @@ public class FailedDetected {
 				LeftRightBagCollision(bag, item1);
 			}
 		} //
-		oneWallLeftOrRight(bag);
-		return false;
+		
+		return oneWallLeftOrRight(bag);
 	}
 	
 	private boolean LeftRightBagCollision(Baggage bag, Baggage item) {
@@ -129,8 +129,8 @@ public class FailedDetected {
 				
 			}
 		}
-		topBag(bag);
-		return false;
+		
+		return topBag(bag);
 	}
 	
 	private boolean topBottomBagCollosion(Baggage bag, Baggage item) {
@@ -197,8 +197,8 @@ public class FailedDetected {
 				}
 			}
 		}
-		bottomBag(bag);
-		return false;
+		
+		return bottomBag(bag);
 	}
 	
 	private boolean bottomBag(Baggage bag) {

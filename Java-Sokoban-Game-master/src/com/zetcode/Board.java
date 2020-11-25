@@ -45,7 +45,7 @@ public class Board extends JPanel {
 	private boolean isCollision = false;
 	private int levelSelected;
 	private int mode;
-	private boolean flag = false; // ¹Ğ¸é¼­ °¬´ÂÁö È®ÀÎÇÏ´Â ÇÔ¼ö
+	private boolean flag = false; // ë°€ë©´ì„œ ê°”ëŠ”ì§€ í™•ì¸í•˜ëŠ” í•¨ìˆ˜
 	private String selectCharacter;
 
 	private final int OFFSET = 30;
@@ -166,7 +166,7 @@ public class Board extends JPanel {
 		initBoard();
 	}
 
-	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, Replay replay, String selectCharacter, ReplayKeyAdapter replayKeyAdapter) { // ¸®ÇÃ·¹ÀÌ ÀÏ¶§
+	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, Replay replay, String selectCharacter, ReplayKeyAdapter replayKeyAdapter) { // ë¦¬í”Œë ˆì´ ì¼ë•Œ
 
 		setLayout(null);
 		
@@ -188,7 +188,7 @@ public class Board extends JPanel {
 			}
 			fr.close();
 		} catch (IOException e) {
-			System.out.println("¿À·ù");
+			System.out.println("ì˜¤ë¥˜");
 		}
 		
 		this.replay = replay;
@@ -220,7 +220,7 @@ public class Board extends JPanel {
 		initWorld();
 	}
 
-	private void initWorld() { // ÃÊ±âÈ­
+	private void initWorld() { // ì´ˆê¸°í™”
 
 		walls = new ArrayList<>();
 		baggs = new ArrayList<>();
@@ -229,10 +229,10 @@ public class Board extends JPanel {
 		int x = OFFSET;
 		int y = OFFSET;
 
-		Wall wall; // º®
-		Baggage b; // ¹Ì´Â°Å
-		Area a; // ³¡³ª´Â°Å
-		Llm llm;// °¡¿îµ¥ ¾Èº¸ÀÌ´Â º®
+		Wall wall; // ë²½
+		Baggage b; // ë¯¸ëŠ”ê±°
+		Area a; // ëë‚˜ëŠ”ê±°
+		Llm llm;// ê°€ìš´ë° ì•ˆë³´ì´ëŠ” ë²½
 		
 		for (int i = 0; i < level[levelSelected].length(); i++) {
 
@@ -243,17 +243,17 @@ public class Board extends JPanel {
 			case '\n':
 				y += SPACE;
 
-				if (this.w < x) { // widthÀÇ Å©±â¸¦ x°¡ °¡Àå Å«°É·Î ÇÔ
+				if (this.w < x) { // widthì˜ í¬ê¸°ë¥¼ xê°€ ê°€ì¥ í°ê±¸ë¡œ í•¨
 					this.w = x;
 				}
 
-				x = OFFSET; // ÇÑ¹ø ÁÙ¹Ù²ŞÀÌ µÇ¸é x=OFFÀ¸·Î ´Ù½Ã ÃÊ±âÈ­
+				x = OFFSET; // í•œë²ˆ ì¤„ë°”ê¿ˆì´ ë˜ë©´ x=OFFìœ¼ë¡œ ë‹¤ì‹œ ì´ˆê¸°í™”
 				break;
 
 			case '#':
-				wall = new Wall(x, y, mode); // x,y ÁöÁ¡¿¡ Wall °´Ã¼ »ı¼º
-				walls.add(wall); // Wall °´Ã¼¸¦ Wall ¾î·¹ÀÌ ¸®½ºÆ®¿¡ ³ÖÀ½
-				x += SPACE; // x¿¡ ÇÑÄ­(SPACE)¸¦ ´õÇÔ
+				wall = new Wall(x, y, mode); // x,y ì§€ì ì— Wall ê°ì²´ ìƒì„±
+				walls.add(wall); // Wall ê°ì²´ë¥¼ Wall ì–´ë ˆì´ ë¦¬ìŠ¤íŠ¸ì— ë„£ìŒ
+				x += SPACE; // xì— í•œì¹¸(SPACE)ë¥¼ ë”í•¨
 				break;
 				
 			case '!':
@@ -264,18 +264,18 @@ public class Board extends JPanel {
 
 			case '$':
 				b = new Baggage(x, y);
-				baggs.add(b); // b == Baggage °´Ã¼
+				baggs.add(b); // b == Baggage ê°ì²´
 				x += SPACE;
 				break;
 
 			case '.':
-				a = new Area(x, y); // ³¡³ª´Â ÁöÁ¡
-				areas.add(a); // a == Area °´Ã¼
+				a = new Area(x, y); // ëë‚˜ëŠ” ì§€ì 
+				areas.add(a); // a == Area ê°ì²´
 				x += SPACE;
 				break;
 
 			case '@':
-				soko = new Player(x, y, selectCharacter); // ÇÃ·¹ÀÌ¾îÀÓ
+				soko = new Player(x, y, selectCharacter); // í”Œë ˆì´ì–´ì„
 				x += SPACE;
 				break;
 
@@ -287,7 +287,7 @@ public class Board extends JPanel {
 				break;
 			}
 
-			h = y; // ³ôÀÌ¸¦ Á¤ÇÔ.
+			h = y; // ë†’ì´ë¥¼ ì •í•¨.
 		}
 		
 	}
@@ -320,15 +320,15 @@ public class Board extends JPanel {
 				g.drawImage(item.getImage(), item.x() + 16, item.y() + 16, this);
 			}
 			else if(item instanceof Player) {
-				if(selectCharacter.equals("Mario")) { // ¸¶¸®¿À ÀÏ¶§
+				if(selectCharacter.equals("Mario")) { // ë§ˆë¦¬ì˜¤ ì¼ë•Œ
 					g.drawImage(item.getImage(), item.x(), item.y() , this);
 					
-				}else { // ³ë¶õ¸ğÀÚ ÀÏ¶§
+				}else { // ë…¸ë€ëª¨ì ì¼ë•Œ
 					g.drawImage(item.getImage(), item.x() + 13, item.y() , this);
 				}
 			}
 			else {
-				Actor.setMode(mode); // ¾ø¾îÁö´Â ¸ğµåÀÎÁö ±×³ÉÀÎÁö ÆÇº°ÇÏ±â À§ÇØ
+				Actor.setMode(mode); // ì—†ì–´ì§€ëŠ” ëª¨ë“œì¸ì§€ ê·¸ëƒ¥ì¸ì§€ íŒë³„í•˜ê¸° ìœ„í•´
 				g.drawImage(item.getImage(), item.x(), item.y(), this);
 			}
 			
@@ -392,16 +392,16 @@ public class Board extends JPanel {
 	
 	
 	@Override
-	public void paintComponent(Graphics g) { // ÄÄÆ÷³ÍÆ®¸¦ ±×¸²
+	public void paintComponent(Graphics g) { // ì»´í¬ë„ŒíŠ¸ë¥¼ ê·¸ë¦¼
 		super.paintComponent(g);
 
 		buildWorld(g);
 	}
 
-	public void isCompleted() { // ´Ù ÃÖÁ¾ÁöÁ¡¿¡ ³Ö¾úÀ»°æ¿ì isCompleted=true Replay¿¡¼­ »ç¿ëÁß
+	public void isCompleted() { // ë‹¤ ìµœì¢…ì§€ì ì— ë„£ì—ˆì„ê²½ìš° isCompleted=true Replayì—ì„œ ì‚¬ìš©ì¤‘
 		
-		int nOfBags = baggs.size(); // Bag °´Ã¼ÀÇ ¼ıÀÚ
-		int finishedBags = 0; // Bag°´Ã¼ÀÇ ¼ıÀÚ¿Í finishedBags°¡ isCompleted=ture == °ÔÀÓ Á¾·á
+		int nOfBags = baggs.size(); // Bag ê°ì²´ì˜ ìˆ«ì
+		int finishedBags = 0; // Bagê°ì²´ì˜ ìˆ«ìì™€ finishedBagsê°€ isCompleted=ture == ê²Œì„ ì¢…ë£Œ
 
 		for (int i = 0; i < nOfBags; i++) {
 
@@ -409,16 +409,16 @@ public class Board extends JPanel {
 
 			for (int j = 0; j < nOfBags; j++) {
 
-				Area area = areas.get(j); // ³¡³ª´Â ÁöÁ¡
+				Area area = areas.get(j); // ëë‚˜ëŠ” ì§€ì 
 
-				if (bag.x() == area.x() && bag.y() == area.y()) { // bag x,y¿Í area x,y°¡ °°À¸¸é finishedBags +1Áõ°¡
+				if (bag.x() == area.x() && bag.y() == area.y()) { // bag x,yì™€ area x,yê°€ ê°™ìœ¼ë©´ finishedBags +1ì¦ê°€
 
 					finishedBags += 1;
 				}
 			}
 		}
 
-		if (finishedBags == nOfBags) { // finishedBag°ú nOfbags°¡ °°À¸¸é ¸ğµÎ ÃÖÁ¾ÁöÁ¡¿¡ ³Ö¾ú´Ù´Â ¶æ
+		if (finishedBags == nOfBags) { // finishedBagê³¼ nOfbagsê°€ ê°™ìœ¼ë©´ ëª¨ë‘ ìµœì¢…ì§€ì ì— ë„£ì—ˆë‹¤ëŠ” ëœ»
 			moveCount = 0;
 			timer.stop();
 			String s = "Completed";
@@ -432,7 +432,7 @@ public class Board extends JPanel {
 			
 			replayFileIo.replayFileInput(levelSelected, s);
 			
-			if(!isReplay) { // replay°¡ ¾Æ´Ò‹š¸¸ ½ºÄÚ¾î °è»ê
+			if(!isReplay) { // replayê°€ ì•„ë‹Â‹Âšë§Œ ìŠ¤ì½”ì–´ ê³„ì‚°
 				this.timerCount = time.getTime();
 				time.setIsFinished(true);
 				File scoreFileFolder = new File("src/score");
@@ -442,7 +442,7 @@ public class Board extends JPanel {
 				score = new Score(levelSelected, moveCount, timerCount, scoreFile);
 			}
 			
-			isCompleted = true; // µû¶ó¼­ ³¡³²
+			isCompleted = true; // ë”°ë¼ì„œ ëë‚¨
 			
 			
 			ImageIcon completeImage = new ImageIcon("src/resources/Complete & Failed/Complete.png");
@@ -451,7 +451,7 @@ public class Board extends JPanel {
 			add(completeLabel);
 			completeLabel.setBounds(0, 0, w, h);
 			
-			repaint(); // ÄÄÆ÷³ÍÆ®ÀÇ ¸ğ¾ç »ö»óµîÀÌ ¹Ù²î¾úÀ»¶§ »ç¿ë
+			repaint(); // ì»´í¬ë„ŒíŠ¸ì˜ ëª¨ì–‘ ìƒ‰ìƒë“±ì´ ë°”ë€Œì—ˆì„ë•Œ ì‚¬ìš©
 		}
 	}
 
@@ -553,10 +553,6 @@ public class Board extends JPanel {
 		return walls.get(i);
 	}
 	
-	public Area getArea(int i) {
-		return areas.get(i);
-	}
-	
 	public Baggage getBags() {
 		return bags;
 	}
@@ -571,11 +567,11 @@ public class Board extends JPanel {
 		return soko;
 	}
 	
-	public void callIsEntered(Baggage bags) { //Replay¿¡¼­ »ç¿ë
+	public void callIsEntered(Baggage bags) { //Replayì—ì„œ ì‚¬ìš©
 		isEntered(bags);
 	}
 	
-	public void callIsFailedDetected(Baggage bags) { //Replay¿¡¼­ »ç¿ë
+	public void callIsFailedDetected(Baggage bags) { //Replayì—ì„œ ì‚¬ìš©
 		if(failed.isFailedDetected(bags)) {
 			isFailed();
 		}
@@ -603,6 +599,7 @@ public class Board extends JPanel {
 	}
 	
 	public void callRestartLevel() {
+		moveCount = 0;
 		restartLevel();
 	}
 	
@@ -612,10 +609,6 @@ public class Board extends JPanel {
 
 	public int getBoardHeight() {
 		return this.h;
-	}
-	
-	public void setMoveCount(int moveCount) {
-		this.moveCount = moveCount;
 	}
 	
 	public void increaseMoveCount() {
@@ -644,17 +637,11 @@ public class Board extends JPanel {
 		return false;
 	}
 	
-	public ArrayList<Wall> getWallsArrayList(){
-		return walls;
-	}
-	
-	public int getUndoCount() {
-		undoCount--;
-		return undoCount;
-	}
-	
 	public void callUndo() {
-		undo();
+		if(undoCount>0) {
+			undo();
+			undoCount--;
+		}
 	}
 	
 	
