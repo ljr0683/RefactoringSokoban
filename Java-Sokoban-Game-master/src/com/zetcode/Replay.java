@@ -28,7 +28,6 @@ public class Replay {
 			e.printStackTrace();
 		}
 		
-		
 		ReplayKeyAdapter replayKeyAdapter = new ReplayKeyAdapter(levelSelected, previousPanel, frame, file, selectCharacter, this);
 		board = replayKeyAdapter.getBoard();
 	}

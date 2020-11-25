@@ -2,6 +2,8 @@ package com.zetcode;
 
 public class CheckCollision {
 	private Board board;
+	private Baggage bag;
+	private Baggage item;
 	
 	public CheckCollision(Board board) {
 		this.board = board;
@@ -9,9 +11,9 @@ public class CheckCollision {
 	
 	public boolean checkWallCollision(Actor actor, int type) {
 
-		switch (type) { // type == 왼쪽 오른쪽 위 아래인지 숫자 1,2,3,4
+		if(type==1) { // type == 왼쪽 오른쪽 위 아래인지 숫자 1,2,3,4
 
-		case Board.LEFT_COLLISION: // 왼쪽 키가 눌렸을때
+		 // 왼쪽 키가 눌렸을때
 
 			for (int i = 0; i < board.getWallsSize(); i++) {
 
@@ -24,8 +26,8 @@ public class CheckCollision {
 			}
 
 			return false; // actor 왼쪽에 벽이 없다면 false 리턴
-
-		case Board.RIGHT_COLLISION:
+		}
+			else if(type==2) {
 			
 			for (int i = 0; i < board.getWallsSize(); i++) {
 
@@ -38,8 +40,12 @@ public class CheckCollision {
 			}
 
 			return false;
-
-		case Board.TOP_COLLISION:
+		}
+		return checkTopOrBottomWallCollision(actor, type);
+		}
+		
+		public boolean checkTopOrBottomWallCollision(Actor actor, int type) {
+		if(type==3) {
 
 			for (int i = 0; i < board.getWallsSize(); i++) {
 
@@ -52,8 +58,8 @@ public class CheckCollision {
 			}
 
 			return false;
-
-		case Board.BOTTOM_COLLISION:
+		}
+		else if(type==4) {
 
 			for (int i = 0; i < board.getWallsSize(); i++) {
 
@@ -66,45 +72,44 @@ public class CheckCollision {
 			}
 
 			return false;
-
-		default:
-			break;
 		}
+			
 
 		return false;
-	}
+	
+}
 
 	public boolean checkBagCollision(int type) { // Bag 객체의 충돌
 
-		switch (type) {
+		if(type==1) {
 
-		case Board.LEFT_COLLISION: // 왼쪽 키가 눌렸을때,
+		 // 왼쪽 키가 눌렸을때,
 
 			for (int i = 0; i < board.getBaggsSize(); i++) {
 
-				Baggage bag = board.getBaggs(i);
+				this.bag = board.getBaggs(i);
 
-				if (board.getSoko().isLeftCollision(bag)) { // soko 왼쪽에 bag이 존재하면
+				if (board.getSoko().isLeftCollision(this.bag)) { // soko 왼쪽에 bag이 존재하면
 
 					for (int j = 0; j < board.getBaggsSize(); j++) {
 
-						Baggage item = board.getBaggs(j); // bag 어레이 리스트를 하나씩 검사하여 item에 넣음
+						this.item = board.getBaggs(j); // bag 어레이 리스트를 하나씩 검사하여 item에 넣음
 
-						if (!bag.equals(item)) { // item과 bag이 다른 객체라면
+						if (!this.bag.equals(this.item)) { // item과 bag이 다른 객체라면
 
-							if (bag.isLeftCollision(item)) {// bag 왼쪽에 item(또 다른 Baggage)이 존재하면 안움직임
+							if (this.bag.isLeftCollision(this.item)) {// bag 왼쪽에 item(또 다른 Baggage)이 존재하면 안움직임
 								return true;
 							}
 						}
 
-						if (checkWallCollision(bag, Board.LEFT_COLLISION)) {// bag객체 왼쪽에 wall 객체가 존재하면 안움직임.
+						if (checkWallCollision(this.bag, Board.LEFT_COLLISION)) {// bag객체 왼쪽에 wall 객체가 존재하면 안움직임.
 							return true;
 						}
 					}
 					// 위의 if문을 다 만족하지 않으면 그제서야 bag객체가 움직임.
-					bag.move(-Board.SPACE, 0);
+					this.bag.move(-Board.SPACE, 0);
 					board.setFlag(true);
-					board.setBags(bag);
+					board.setBags(this.bag);
 					// bag객체가 움직인 후 게임이 끝났는지 검사함.
 
 				}
@@ -112,8 +117,8 @@ public class CheckCollision {
 			}
 
 			return false;
-
-		case Board.RIGHT_COLLISION: // 오른쪽 키가 눌렸을때
+		}
+		if(type==2) { // 오른쪽 키가 눌렸을때
 
 			for (int i = 0; i < board.getBaggsSize(); i++) {
 
@@ -146,8 +151,11 @@ public class CheckCollision {
 			}
 
 			return false;
-
-		case Board.TOP_COLLISION:
+		}
+		return checkTopOrBottomBagCollision(type);
+	}
+	public boolean checkTopOrBottomBagCollision(int type) {
+		if(type==3) {
 
 			for (int i = 0; i < board.getBaggsSize(); i++) {
 				
@@ -180,8 +188,8 @@ public class CheckCollision {
 			}
 
 			return false;
-
-		case Board.BOTTOM_COLLISION:
+		}
+		if(type==4) {
 
 			for (int i = 0; i < board.getBaggsSize(); i++) {
 
@@ -213,13 +221,7 @@ public class CheckCollision {
 				}
 
 			}
-
-			break;
-
-		default:
-			break;
 		}
-
 		return false;
 	}
 }
