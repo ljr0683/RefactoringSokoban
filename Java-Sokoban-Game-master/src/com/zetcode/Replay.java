@@ -219,7 +219,7 @@ public class Replay {
 			board.getSoko().changePlayerVector(Board.LEFT_COLLISION);
 
 			if (board.getBags()!= null) {
-				board.callIsEntered(board.getBags());
+				board.isEntered(board.getBags());
 				if (board.getBags().getIsEntered()) {
 					return;
 				}
@@ -243,7 +243,7 @@ public class Replay {
 			board.getSoko().changePlayerVector(Board.RIGHT_COLLISION);
 
 			if (board.getBags() != null) {
-				board.callIsEntered(board.getBags());
+				board.isEntered(board.getBags());
 				if (board.getBags().getIsEntered()) {
 					return;
 				}
@@ -269,7 +269,7 @@ public class Replay {
 			board.getSoko().changePlayerVector(Board.TOP_COLLISION);
 
 			if (board.getBags() != null) {
-				board.callIsEntered(board.getBags());
+				board.isEntered(board.getBags());
 				if (board.getBags().getIsEntered()) {
 					return;
 				}
@@ -292,7 +292,7 @@ public class Replay {
 			board.getSoko().changePlayerVector(Board.BOTTOM_COLLISION);
 
 			if (board.getBags() != null) {
-				board.callIsEntered(board.getBags());
+				board.isEntered(board.getBags());
 				if (board.getBags().getIsEntered()) {
 					return;
 				}
