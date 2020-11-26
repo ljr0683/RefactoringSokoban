@@ -26,13 +26,13 @@ public class LevelSelectPanel extends JPanel {
 	ImageIcon completedIcon = new ImageIcon("src/resources/GameStartImage/Completed.png");
 	ImageIcon failedIcon = new ImageIcon("src/resources/GameStartImage/Failed.png");
 	
-	
 	private File file;
 	private File scoreFile;
 	
 	private UIManager frame;
 	private SelectCharacterPanel previousPanel;
 	private LevelSelectPanel panel;
+	private BoardManager boardManager;
 	
 	private int width, height; // 게임의 크기 설정하기 위함
 	private int levelSelected;
@@ -116,6 +116,10 @@ public class LevelSelectPanel extends JPanel {
 		g.drawImage(backGroundImage.getImage(), 0, 0, this);
 	}
 	
+	public void setBoardManager(BoardManager boardManager) {
+		this.boardManager = boardManager;
+	}
+	
 	class MyMouseListener extends MouseAdapter{
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -126,8 +130,10 @@ public class LevelSelectPanel extends JPanel {
 			
 			if(la.equals(startLabel)) {
 				Board board = new Board(levelSelected, panel, frame, selectCharacter, 0);
-				width = board.getBoardWidth();
-				height = board.getBoardHeight();
+				width = boardManager.getwidth();
+				height = boardManager.getHeight();
+				System.out.println(width);
+				System.out.println(height);
 				frame.changePanel(board, width, height);
 				startLabel.setIcon(startIcon);
 				notExitsReplayLabel.setVisible(false);
@@ -138,8 +144,8 @@ public class LevelSelectPanel extends JPanel {
 				int mode = rand.nextInt(5);
 				System.out.println(mode);
 				Board board = new Board(levelSelected, panel, frame, selectCharacter, mode);
-				width = board.getBoardWidth();
-				height = board.getBoardHeight();
+				width = boardManager.getwidth();
+				height = boardManager.getHeight();
 				frame.changePanel(board, width, height);
 				randomStartLabel.setIcon(randomStartIcon);
 				notExitsReplayLabel.setVisible(false);

@@ -2,6 +2,7 @@ package com.zetcode;
 
 public class CheckCollision {
 	private Board board;
+	private BoardManager boardManager;
 	private Baggage bag;
 	private Baggage item;
 	
@@ -9,13 +10,17 @@ public class CheckCollision {
 		this.board = board;
 	}
 	
+	public CheckCollision(BoardManager boardManager) {
+		this.boardManager = boardManager;
+	}
+	
 	public boolean checkWallCollision(Actor actor, int type) {
 
 		if(type==1) {
 
-			for (int i = 0; i < board.getWallsSize(); i++) {
+			for (int i = 0; i < boardManager.getWallsSize(); i++) {
 
-				Wall wall = board.getWalls(i); 
+				Wall wall = boardManager.getWalls(i); 
 
 				if (actor.isLeftCollision(wall)) { 
 
@@ -27,9 +32,9 @@ public class CheckCollision {
 		}
 			else if(type==2) {
 			
-			for (int i = 0; i < board.getWallsSize(); i++) {
+			for (int i = 0; i < boardManager.getWallsSize(); i++) {
 
-				Wall wall = board.getWalls(i);
+				Wall wall = boardManager.getWalls(i);
 
 				if (actor.isRightCollision(wall)) {
 					
@@ -44,10 +49,10 @@ public class CheckCollision {
 		
 		public boolean checkTopOrBottomWallCollision(Actor actor, int type) {
 		if(type==3) {
+			System.out.println(boardManager);
+			for (int i = 0; i < boardManager.getWallsSize(); i++) {
 
-			for (int i = 0; i < board.getWallsSize(); i++) {
-
-				Wall wall = board.getWalls(i);
+				Wall wall = boardManager.getWalls(i);
 
 				if (actor.isTopCollision(wall)) {
 
@@ -59,9 +64,9 @@ public class CheckCollision {
 		}
 		else if(type==4) {
 
-			for (int i = 0; i < board.getWallsSize(); i++) {
+			for (int i = 0; i < boardManager.getWallsSize(); i++) {
 
-				Wall wall = board.getWalls(i);
+				Wall wall = boardManager.getWalls(i);
 
 				if (actor.isBottomCollision(wall)) {
 
@@ -81,15 +86,15 @@ public class CheckCollision {
 
 		if(type==1) { 
 
-			for (int i = 0; i < board.getBaggsSize(); i++) {
+			for (int i = 0; i < boardManager.getBaggsSize(); i++) {
 
-				this.bag = board.getBaggs(i);
+				this.bag = boardManager.getBaggs(i);
 
-				if (board.getSoko().isLeftCollision(this.bag)) { 
+				if (boardManager.getSoko().isLeftCollision(this.bag)) { 
 
-					for (int j = 0; j < board.getBaggsSize(); j++) {
+					for (int j = 0; j < boardManager.getBaggsSize(); j++) {
 
-						this.item = board.getBaggs(j); 
+						this.item = boardManager.getBaggs(j); 
 
 						if (!this.bag.equals(this.item)) { 
 							
@@ -104,8 +109,8 @@ public class CheckCollision {
 					}
 					
 					this.bag.move(-Board.SPACE, 0);
-					board.setFlag(true);
-					board.setBags(this.bag);
+					boardManager.setFlag(true);
+					boardManager.setBags(this.bag);
 
 				}
 
@@ -115,15 +120,15 @@ public class CheckCollision {
 		}
 		if(type==2) { 
 
-			for (int i = 0; i < board.getBaggsSize(); i++) {
+			for (int i = 0; i < boardManager.getBaggsSize(); i++) {
 
-				Baggage bag = board.getBaggs(i); 
+				Baggage bag = boardManager.getBaggs(i); 
 
-				if (board.getSoko().isRightCollision(bag)) { 
+				if (boardManager.getSoko().isRightCollision(bag)) { 
 
-					for (int j = 0; j < board.getBaggsSize(); j++) {
+					for (int j = 0; j < boardManager.getBaggsSize(); j++) {
 
-						Baggage item = board.getBaggs(j); 
+						Baggage item = boardManager.getBaggs(j); 
 
 						if (!bag.equals(item)) { 
 
@@ -138,8 +143,8 @@ public class CheckCollision {
 					}
 					
 					bag.move(Board.SPACE, 0);
-					board.setFlag(true);
-					board.setBags(bag);
+					boardManager.setFlag(true);
+					boardManager.setBags(bag);
 					
 				}
 
@@ -152,15 +157,15 @@ public class CheckCollision {
 	public boolean checkTopOrBottomBagCollision(int type) {
 		if(type==3) {
 
-			for (int i = 0; i < board.getBaggsSize(); i++) {
+			for (int i = 0; i < boardManager.getBaggsSize(); i++) {
 				
-				Baggage bag = board.getBaggs(i);
+				Baggage bag = boardManager.getBaggs(i);
 
-				if (board.getSoko().isTopCollision(bag)) {
+				if (boardManager.getSoko().isTopCollision(bag)) {
 
-					for (int j = 0; j < board.getBaggsSize(); j++) {
+					for (int j = 0; j < boardManager.getBaggsSize(); j++) {
 
-						Baggage item = board.getBaggs(j);
+						Baggage item = boardManager.getBaggs(j);
 
 						if (!bag.equals(item)) {
 
@@ -175,8 +180,8 @@ public class CheckCollision {
 					}
 
 					bag.move(0, -Board.SPACE);
-					board.setFlag(true);
-					board.setBags(bag);
+					boardManager.setFlag(true);
+					boardManager.setBags(bag);
 
 				}
 
@@ -186,15 +191,15 @@ public class CheckCollision {
 		}
 		if(type==4) {
 
-			for (int i = 0; i < board.getBaggsSize(); i++) {
+			for (int i = 0; i < boardManager.getBaggsSize(); i++) {
 
-				Baggage bag = board.getBaggs(i);
+				Baggage bag = boardManager.getBaggs(i);
 
-				if (board.getSoko().isBottomCollision(bag)) {
+				if (boardManager.getSoko().isBottomCollision(bag)) {
 
-					for (int j = 0; j < board.getBaggsSize(); j++) {
+					for (int j = 0; j < boardManager.getBaggsSize(); j++) {
 
-						Baggage item = board.getBaggs(j);
+						Baggage item = boardManager.getBaggs(j);
 
 						if (!bag.equals(item)) {
 
@@ -210,8 +215,8 @@ public class CheckCollision {
 					}
 
 					bag.move(0, Board.SPACE);
-					board.setFlag(true);
-					board.setBags(bag);
+					boardManager.setFlag(true);
+					boardManager.setBags(bag);
 
 				}
 

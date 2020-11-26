@@ -7,6 +7,7 @@ import java.io.File;
 public class ReplayKeyAdapter extends KeyAdapter{
 	Replay replay;
 	Board board;
+	BoardManager boardManager;
 	
 	public ReplayKeyAdapter(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, String selectCharacter, Replay replay) {
 		this.replay = replay;
@@ -15,19 +16,19 @@ public class ReplayKeyAdapter extends KeyAdapter{
 	
 	private void createBoard(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file,Replay replay, String selectCharacter) {
 		board = new Board(levelSelected, previousPanel, frame, file, replay, selectCharacter, this);
-		int width = board.getBoardWidth();
-		int height = board.getBoardHeight();
+		int width = boardManager.getwidth();
+		int height = boardManager.getHeight();
 		frame.changePanel(board, width, height);
 	}
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
 		
-		if (board.getIsCompleted()) { // 게임이 끝남.
+		if (boardManager.getIsCompleted()) { // 게임이 끝남.
 			return;
 		}
 
-		if (board.getIsFailed()) {
+		if (boardManager.getIsFailed()) {
 			return;
 		}
 		
@@ -51,8 +52,8 @@ public class ReplayKeyAdapter extends KeyAdapter{
 			
 	}
 	
-	public Board getBoard() {
-		return board;
+	public void setBoardManager(BoardManager boardManager) {
+		this.boardManager = boardManager;
 	}
 }
 

@@ -1,6 +1,8 @@
 package com.zetcode;
 
-public class CompletedFailedPanel {
+import javax.swing.JPanel;
+
+public class CompletedFailedPanel extends JPanel{
 	Score score;
 	
 }

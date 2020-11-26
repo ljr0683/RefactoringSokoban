@@ -51,8 +51,5 @@ public class FileIO {
 	public void enqueue(int i) {
 		replay_Deque.offer(i);
 	}
-	
-	public String getFilePath() {
-		return filePath;
-	}
+
 }

@@ -21,31 +21,28 @@ public class Board extends JPanel {
 
 	private Deque<Integer> replay_Deque = new LinkedList<>(); 
 
-	private int undoCount = 3;
+	private int undoCount;
 	private int moveCount;
-	private int limitturn = 1;
+	private int limitturn;
 	private int timerCount;
 	private UIManager frame;
 	private LevelSelectPanel previousPanel;
-	private Baggage bags = null;
 	private File file;
 	private Replay replay;
-	private FailedDetected failed;
 	private MyTimer time;
 	private Timer timer;
-	private CheckCollision checkCollision;
 	private Score score;
+	private BoardManager boardManager;
+	private ReplayKeyAdapter replayKeyAdapter;
 	
-	private ImageIcon backSpaceIcon = new ImageIcon("src/resources/BackSpace/BackSpace.png");
-	private JLabel backSpaceLabel = new JLabel(backSpaceIcon);
-	private ImageIcon[] boomImage = new ImageIcon[3];
-	private JLabel[] boomLabel = new JLabel[3];
+	private ImageIcon backSpaceIcon ;
+	private JLabel backSpaceLabel ;
+	private ImageIcon[] boomImage ;
+	private JLabel[] boomLabel;
 	
 	private int size;
-	private boolean isCollision = false;
 	private int levelSelected;
 	private int mode;
-	private boolean flag = false; // 밀면서 갔는지 확인하는 함수
 	private String selectCharacter;
 
 	private final int OFFSET = 30;
@@ -63,14 +60,16 @@ public class Board extends JPanel {
 	private int w = 0;
 	private int h = 0;
 
-	private boolean isCompleted = false;
-	private boolean isFailed = false;
 	private boolean isReplay = false;
-	
+
 	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, String selectCharacter, int mode) {
 
 		this.moveCount = 0;
 		this.timerCount = 0;
+		undoCount = 3;
+		
+		boomImage = new ImageIcon[3];
+		boomLabel = new JLabel[3];
 		
 		for(int i = 0; i < boomImage.length; i++) {
 			boomImage[i] = new ImageIcon("src/resources/Boom/boom"+i+".png");
@@ -83,7 +82,6 @@ public class Board extends JPanel {
 		
 		limitturn = 500;
 	
-		addKeyListener(new PlayKeyAdapter(this, time, mode, timer));
 		initBoard(levelSelected, previousPanel, frame, selectCharacter);
 	}
 
@@ -99,14 +97,12 @@ public class Board extends JPanel {
 			}
 			fr.close();
 		} catch (IOException e) {
-			System.out.println("오류");
+			
 		}
-		
+		this.replayKeyAdapter = replayKeyAdapter;
 		this.replay = replay;
-		
 		isReplay = true;
 		
-		addKeyListener(replayKeyAdapter);
 		initBoard(levelSelected, previousPanel, frame, selectCharacter);
 		
 	}
@@ -119,6 +115,8 @@ public class Board extends JPanel {
 		this.levelSelected = levelSelected;
 		this.frame = frame;
 		this.selectCharacter = selectCharacter;
+		backSpaceIcon = new ImageIcon("src/resources/BackSpace/BackSpace.png");
+		backSpaceLabel = new JLabel(backSpaceIcon);
 		
 		add(backSpaceLabel);
 		backSpaceLabel.addMouseListener(new MyMouseListener()); 
@@ -136,8 +134,6 @@ public class Board extends JPanel {
 		});
 		timer.start();
 		
-		failed = new FailedDetected(this);
-		checkCollision = new CheckCollision(this);
 		setFocusable(true);
 		initWorld();
 	}
@@ -212,6 +208,16 @@ public class Board extends JPanel {
 
 			h = y; // 높이를 정함.
 		}
+
+		boardManager = new BoardManager(walls, baggs, areas, w, h, soko, this, levelSelected);
+		previousPanel.setBoardManager(boardManager);
+		if(replay !=null) {
+			replay.setBoardManager(boardManager);
+			replayKeyAdapter.setBoardManager(boardManager);
+			addKeyListener(replayKeyAdapter);
+		}else {
+			addKeyListener(new PlayKeyAdapter(this, time, mode, timer, boardManager));
+		}
 		
 	}
 
@@ -263,23 +269,16 @@ public class Board extends JPanel {
 			}
 		}
 		
-		if (isFailed) {
+		if (boardManager.getIsFailed()) {
 			if(!isReplay) {
 				time.setIsFinished(true);
-				if(time.notMoveTime==6) {
-					boomLabel[2].setBounds(w/2+200, 50, 64, 64);
-					boomLabel[2].setVisible(true);
-				}
+				
 			}
 		}
-	    
-	    if(time.notMoveTime==6) {
-	    	isFailed();
-	    }
 		
 		if(mode==3) {
 			if(limitturn <= moveCount) {
-				isFailed();
+				boardManager.isFailed();
 	    	}
         }
 		
@@ -291,6 +290,11 @@ public class Board extends JPanel {
 			if(time.notMoveTime==5) {
 				boomLabel[1].setBounds(w/2, 50, 64, 64);
 				boomLabel[1].setVisible(true);
+			}
+			if(time.notMoveTime==6) {
+				boomLabel[2].setBounds(w/2+200, 50, 64, 64);
+				boomLabel[2].setVisible(true);
+				boardManager.isFailed();
 			}
 		}
 		
@@ -359,8 +363,7 @@ public class Board extends JPanel {
 				score = new Score(levelSelected, moveCount, timerCount, scoreFile);
 			}
 			
-			isCompleted = true; // 따라서 끝남
-			
+			boardManager.setIsCompleted(true); // 따라서 끝남
 			
 			ImageIcon completeImage = new ImageIcon("src/resources/Complete & Failed/Complete.png");
 			JLabel completeLabel = new JLabel(completeImage);
@@ -372,41 +375,6 @@ public class Board extends JPanel {
 		}
 	}
 
-	public void isFailed() { 
-		
-		isFailed = true;
-		
-		if (isFailed) {
-			moveCount= 0;
-			String s = "Failed";
-
-			FileIO fileio = new FileIO();
-			int size = replay_Deque.size();
-
-			for (int i = 0; i < size; i++) {
-				fileio.enqueue(replay_Deque.poll());
-			}
-
-			fileio.replayFileInput(levelSelected, s);
-			
-			ImageIcon failedImage = new ImageIcon("src/resources/Complete & Failed/Failed.png");
-			JLabel failedLabel = new JLabel(failedImage);
-			
-			add(failedLabel);
-			failedLabel.setBounds(0, 0, w, h);
-		}
-		repaint();
-	}
-
-	public void isEntered(Baggage bag) {
-		for (int i = 0; i < areas.size(); i++) {
-			Area area = areas.get(i);
-			if (bag.x() == area.x() && bag.y() == area.y()) {
-				bag.setIsEntered();
-			}
-		}
-	}
-
 	public void restartLevel() {
 		moveCount = 0;
 		areas.clear();
@@ -415,21 +383,15 @@ public class Board extends JPanel {
 
 		initWorld();
 
-		if (isCompleted) {
-			isCompleted = false;
-		}
-
-		if (isFailed) {
-			isFailed = false;
-		}
-
+		boardManager.setIsCompleted(false);
+		boardManager.setIsFailed(false);
 	}
 	
 	public void undo() {
 		if(!replay_Deque.isEmpty()) {
 			if(undoCount>0) {
 				int key = replay_Deque.pollLast();
-				replay = new Replay(this);
+				replay = new Replay(boardManager);
 				replay.offerReplay_Deque(key);
 				if(key == 5 || key == 6) {
 					key = replay_Deque.pollLast();
@@ -441,85 +403,8 @@ public class Board extends JPanel {
 		}
 	}
 	
-	public boolean getCheckWallCollision(Actor actor, int type) {
-		if(checkCollision.checkWallCollision(actor, type))
-			return true;
-		return false;
-	}
-	
-	public boolean getCheckBagCollision(int type) {
-		if(checkCollision.checkBagCollision(type))
-			return true;
-		return false;
-	}
-	
-	public boolean getIsCollision() {
-		return isCollision;
-	}
-	
-	public void setIsCollision(boolean TorF) {
-		isCollision = TorF;
-	}
-
-	public boolean getFlag() {
-		return flag;
-	}
-	
-	public Baggage getBaggs(int i) {
-		return baggs.get(i);
-	}
-	
-	public Wall getWalls(int i) {
-		return walls.get(i);
-	}
-	
-	public Baggage getBags() {
-		return bags;
-	}
-	
-	public void setBags(Baggage collisionBag) {
-		if(collisionBag!=null) {
-			bags = collisionBag;
-		}
-	}
-	
-	public Player getSoko() {
-		return soko;
-	}
-	
-	public void callIsFailedDetected(Baggage bags) { //Replay에서 사용
-		if(failed.isFailedDetected(bags)) {
-			isFailed();
-		}
-		return;
-	}
-	
-	public int getBaggsSize() {
-		return baggs.size();
-	}
-
-	public int getWallsSize() {
-		return walls.size();
-	}
-	
-	public void setFlag(boolean flag) {
-		this.flag = flag;
-	}
-	
-	public boolean getIsCompleted() {
-		return isCompleted;
-	}
-	
-	public boolean getIsFailed() {
-		return isFailed;
-	}
-	
-	public int getBoardWidth() {
-		return this.w;
-	}
-
-	public int getBoardHeight() {
-		return this.h;
+	public void setZeroMoveCount() {
+		this.moveCount=0;
 	}
 	
 	public void increaseMoveCount() {
@@ -539,6 +424,10 @@ public class Board extends JPanel {
 			return true;
 		return false;
 	}
+	
+	public Deque<Integer> getReplayDeque(){
+		return replay_Deque;
+	}
 		
 	class MyMouseListener extends MouseAdapter{
 		public void mouseClicked(MouseEvent e) {
@@ -546,7 +435,7 @@ public class Board extends JPanel {
 			if(la.equals(backSpaceLabel)) {
 				time.setIsFinished(true);
 				frame.changePanel(previousPanel);
-				isFailed = false;
+				boardManager.setIsFailed(false);
 				time.notMoveTime = 0;
 				moveCount=0;
 			}
