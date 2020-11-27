@@ -210,7 +210,7 @@ public class Board extends JPanel {
 			addKeyListener(replayKeyAdapter);
 			
 		}else {
-			addKeyListener(new PlayKeyAdapter(this, time, mode, timer, boardManager));
+			addKeyListener(new PlayKeyAdapter(this, time, mode, timer, boardManager, boomLabel));
 			
 		}
 		
@@ -280,10 +280,12 @@ public class Board extends JPanel {
 				boomLabel[0].setVisible(true);
 			}
 			if(time.notMoveTime==5) {
+				boomLabel[0].setVisible(false);
 				boomLabel[1].setBounds(w/2, 50, 64, 64);
 				boomLabel[1].setVisible(true);
 			}
 			if(time.notMoveTime==6) {
+				boomLabel[1].setVisible(false);
 				boomLabel[2].setBounds(w/2+200, 50, 64, 64);
 				boomLabel[2].setVisible(true);
 				boardManager.isFailed();

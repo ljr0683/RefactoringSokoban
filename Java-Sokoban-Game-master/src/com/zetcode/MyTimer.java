@@ -18,7 +18,6 @@ public class MyTimer {
 		
 		Timer m_timer = new Timer();
 		TimerTask m_task = new TimerTask() {
-			
 			@Override
 			public void run() {
 				if(!isfinished) {

@@ -4,6 +4,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Iterator;
 
+import javax.swing.JLabel;
 import javax.swing.Timer;
 
 public class PlayKeyAdapter extends KeyAdapter {
@@ -12,21 +13,21 @@ public class PlayKeyAdapter extends KeyAdapter {
 
 	private Board board;
 	private CheckCollision checkCollision;
-	private FailedDetected failed;
 	private MyTimer time;
 	private Timer timer;
 	private BoardManager boardManager;
+	private JLabel[] boomLabel;
 
 	private int mode;
 
-	public PlayKeyAdapter(Board board, MyTimer time, int mode, Timer timer, BoardManager boardManager) {
+	public PlayKeyAdapter(Board board, MyTimer time, int mode, Timer timer, BoardManager boardManager, JLabel[] boomLabel) {
 		this.board = board;
 		this.time = time;
 		this.mode = mode;
 		this.timer = timer;
 		this.boardManager = boardManager;
-		checkCollision = new CheckCollision(boardManager);
-		failed = new FailedDetected(boardManager);
+		this.checkCollision = new CheckCollision(boardManager);
+		this.boomLabel = boomLabel;
 	}
 
 	@Override
@@ -39,6 +40,9 @@ public class PlayKeyAdapter extends KeyAdapter {
 		if (boardManager.getIsFailed()) {
 			timer.stop();
 			return;
+		}
+		for(int i=0; i<boomLabel.length; i++) {
+			boomLabel[i].setVisible(false);
 		}
 
 		int key = e.getKeyCode();
@@ -114,9 +118,7 @@ public class PlayKeyAdapter extends KeyAdapter {
 			}
 		}
 
-//		if (failed.isFailedDetected(boardManager.getBags())) {
-//			board.isFailed();
-//		}
+
 		
 		boardManager.callIsFailedDetected(boardManager.getBags());
 		return;
@@ -158,10 +160,6 @@ public class PlayKeyAdapter extends KeyAdapter {
 				return;
 			}
 		}
-
-//		if (failed.isFailedDetected(boardManager.getBags())) {
-//			board.isFailed();
-//		}
 		
 		boardManager.callIsFailedDetected(boardManager.getBags());
 		
@@ -205,10 +203,6 @@ public class PlayKeyAdapter extends KeyAdapter {
 				return;
 			}
 		}
-
-//		if (failed.isFailedDetected(boardManager.getBags())) {
-//			board.isFailed();
-//		}
 		
 		boardManager.callIsFailedDetected(boardManager.getBags());
 		
@@ -253,10 +247,6 @@ public class PlayKeyAdapter extends KeyAdapter {
 				return;
 			}
 		}
-
-//		if (failed.isFailedDetected(boardManager.getBags())) {
-//			failed.isFailed();
-//		}
 		
 		boardManager.callIsFailedDetected(boardManager.getBags());
 		

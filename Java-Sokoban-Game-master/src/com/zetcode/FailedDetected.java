@@ -8,7 +8,7 @@ import javax.swing.JLabel;
 
 public class FailedDetected {
 	private BoardManager boardManager;
-	private Deque<Integer> replay_Deque = new LinkedList<>(); 
+	private Deque<Integer> replay_Deque; 
 
 	public FailedDetected(BoardManager boardManager) {
 		this.boardManager = boardManager;
