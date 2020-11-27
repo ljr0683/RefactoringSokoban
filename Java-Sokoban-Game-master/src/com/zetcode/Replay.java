@@ -89,7 +89,7 @@ public class Replay {
 	}
 	
 	private void DoingGoBack(int key3) {
-		if(key3==1) {
+		if(key3==boardManager.LEFT_COLLISION) {
 		
 			if (boardManager.getIsCollision()) {
 				for(int i=0; i<boardManager.getBaggsSize(); i++) {
@@ -97,28 +97,28 @@ public class Replay {
 					if(boardManager.getSoko().isLeftCollision(collisionBag))
 						boardManager.setBags(collisionBag);
 				}
-				boardManager.getBags().move(Board.SPACE, 0);
+				boardManager.getBags().move(boardManager.SPACE, 0);
 			}
-			boardManager.getSoko().move(Board.SPACE, 0);
-			boardManager.getSoko().changePlayerVector(Board.LEFT_COLLISION);
+			boardManager.getSoko().move(boardManager.SPACE, 0);
+			boardManager.getSoko().changePlayerVector(boardManager.LEFT_COLLISION);
 			
 			if(!undo)
 				replay_Deque.offerFirst(key3);
 			
 		}
 			
-		if(key3==2) {
+		if(key3==boardManager.RIGHT_COLLISION) {
 			if (boardManager.getIsCollision()) {
 				for(int i=0; i<boardManager.getBaggsSize(); i++) {
 					Baggage collisionBag = boardManager.getBaggs(i);
 					if(boardManager.getSoko().isRightCollision(collisionBag))
 						boardManager.setBags(collisionBag);
 				}
-				boardManager.getBags().move(-Board.SPACE, 0);
+				boardManager.getBags().move(-boardManager.SPACE, 0);
 			}
 
-			boardManager.getSoko().move(-Board.SPACE, 0);
-			boardManager.getSoko().changePlayerVector(Board.RIGHT_COLLISION);
+			boardManager.getSoko().move(-boardManager.SPACE, 0);
+			boardManager.getSoko().changePlayerVector(boardManager.RIGHT_COLLISION);
 			
 			if(!undo)
 				replay_Deque.offerFirst(key3);
@@ -126,35 +126,35 @@ public class Replay {
 		DoingTopOrBottomGoBack(key3);
 	}
 		private void DoingTopOrBottomGoBack(int key3) {
-		if(key3==3) {
+		if(key3==boardManager.TOP_COLLISION) {
 			if (boardManager.getIsCollision()) {
 				for(int i=0; i<boardManager.getBaggsSize(); i++) {
 					Baggage collisionBag = boardManager.getBaggs(i);
 					if(boardManager.getSoko().isTopCollision(collisionBag))
 						boardManager.setBags(collisionBag);
 				}
-				boardManager.getBags().move(0, Board.SPACE);
+				boardManager.getBags().move(0, boardManager.SPACE);
 			}
 
-			boardManager.getSoko().move(0, Board.SPACE);
-			boardManager.getSoko().changePlayerVector(Board.TOP_COLLISION);
+			boardManager.getSoko().move(0, boardManager.SPACE);
+			boardManager.getSoko().changePlayerVector(boardManager.TOP_COLLISION);
 			
 			if(!undo)
 				replay_Deque.offerFirst(key3);
 			
 		}
-		if(key3==4) {
+		if(key3==boardManager.BOTTOM_COLLISION) {
 			if (boardManager.getIsCollision()) {
 				for(int i=0; i<boardManager.getBaggsSize(); i++) {
 					Baggage collisionBag = boardManager.getBaggs(i);
 					if(boardManager.getSoko().isBottomCollision(collisionBag))
 						boardManager.setBags(collisionBag);
 				}
-				boardManager.getBags().move(0, -Board.SPACE);
+				boardManager.getBags().move(0, -boardManager.SPACE);
 			}
 
-			boardManager.getSoko().move(0, -Board.SPACE);
-			boardManager.getSoko().changePlayerVector(Board.BOTTOM_COLLISION);
+			boardManager.getSoko().move(0, -boardManager.SPACE);
+			boardManager.getSoko().changePlayerVector(boardManager.BOTTOM_COLLISION);
 			
 			if(!undo)
 				replay_Deque.offerFirst(key3);
@@ -202,18 +202,18 @@ public class Replay {
 	}
 	
 	public void DoingGoAhead(int key2) {
-		if(key2==1){
+		if(key2==boardManager.LEFT_COLLISION){
 
-			if (boardManager.getCheckWallCollision(boardManager.getSoko(), Board.LEFT_COLLISION)) { // soko객체 왼쪽에 벽이 있다면 움직이지 않고 키 이벤트를 끝냄
+			if (boardManager.getCheckWallCollision(boardManager.getSoko(), boardManager.LEFT_COLLISION)) { // soko객체 왼쪽에 벽이 있다면 움직이지 않고 키 이벤트를 끝냄
 				return;
 			}
 
-			if (boardManager.getCheckBagCollision(Board.LEFT_COLLISION)) {
+			if (boardManager.getCheckBagCollision(boardManager.LEFT_COLLISION)) {
 				return;
 			}
 
-			boardManager.getSoko().move(-Board.SPACE, 0); 
-			boardManager.getSoko().changePlayerVector(Board.LEFT_COLLISION);
+			boardManager.getSoko().move(-boardManager.SPACE, 0); 
+			boardManager.getSoko().changePlayerVector(boardManager.LEFT_COLLISION);
 
 			if (boardManager.getBags()!= null) {
 				boardManager.isEntered(boardManager.getBags());
@@ -227,17 +227,17 @@ public class Replay {
 
 		
 		}
-		if(key2==2) {
-			if (boardManager.getCheckWallCollision(boardManager.getSoko(),Board.RIGHT_COLLISION)) {
+		if(key2==boardManager.RIGHT_COLLISION) {
+			if (boardManager.getCheckWallCollision(boardManager.getSoko(),boardManager.RIGHT_COLLISION)) {
 				return;
 			}
 
-			if (boardManager.getCheckBagCollision(Board.RIGHT_COLLISION)) {
+			if (boardManager.getCheckBagCollision(boardManager.RIGHT_COLLISION)) {
 				return;
 			}
 
-			boardManager.getSoko().move(Board.SPACE, 0);
-			boardManager.getSoko().changePlayerVector(Board.RIGHT_COLLISION);
+			boardManager.getSoko().move(boardManager.SPACE, 0);
+			boardManager.getSoko().changePlayerVector(boardManager.RIGHT_COLLISION);
 
 			if (boardManager.getBags() != null) {
 				boardManager.isEntered(boardManager.getBags());
@@ -252,18 +252,18 @@ public class Replay {
 		DoingTopOrBottomGoAhead(key2);
 	}
 		public void DoingTopOrBottomGoAhead(int key2) {
-		if(key2==3) {
+		if(key2==boardManager.TOP_COLLISION) {
 
-			if (boardManager.getCheckWallCollision(boardManager.getSoko(), Board.TOP_COLLISION)) {
+			if (boardManager.getCheckWallCollision(boardManager.getSoko(), boardManager.TOP_COLLISION)) {
 				return;
 			}
 
-			if (boardManager.getCheckBagCollision(Board.TOP_COLLISION)) {
+			if (boardManager.getCheckBagCollision(boardManager.TOP_COLLISION)) {
 				return;
 			}
 
-			boardManager.getSoko().move(0, -Board.SPACE);
-			boardManager.getSoko().changePlayerVector(Board.TOP_COLLISION);
+			boardManager.getSoko().move(0, -boardManager.SPACE);
+			boardManager.getSoko().changePlayerVector(boardManager.TOP_COLLISION);
 
 			if (boardManager.getBags() != null) {
 				boardManager.isEntered(boardManager.getBags());
@@ -276,17 +276,17 @@ public class Replay {
 			
 			
 		}
-		if(key2==4) {
-			if (boardManager.getCheckWallCollision(boardManager.getSoko(), Board.BOTTOM_COLLISION)) {
+		if(key2==boardManager.BOTTOM_COLLISION) {
+			if (boardManager.getCheckWallCollision(boardManager.getSoko(), boardManager.BOTTOM_COLLISION)) {
 				return;
 			}
 
-			if (boardManager.getCheckBagCollision(Board.BOTTOM_COLLISION)) {
+			if (boardManager.getCheckBagCollision(boardManager.BOTTOM_COLLISION)) {
 				return;
 			}
 
-			boardManager.getSoko().move(0, Board.SPACE);
-			boardManager.getSoko().changePlayerVector(Board.BOTTOM_COLLISION);
+			boardManager.getSoko().move(0, boardManager.SPACE);
+			boardManager.getSoko().changePlayerVector(boardManager.BOTTOM_COLLISION);
 
 			if (boardManager.getBags() != null) {
 				boardManager.isEntered(boardManager.getBags());

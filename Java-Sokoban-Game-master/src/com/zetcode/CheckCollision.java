@@ -16,7 +16,7 @@ public class CheckCollision {
 	
 	public boolean checkWallCollision(Actor actor, int type) {
 
-		if(type==1) {
+		if(type==boardManager.LEFT_COLLISION) {
 
 			for (int i = 0; i < boardManager.getWallsSize(); i++) {
 
@@ -30,7 +30,7 @@ public class CheckCollision {
 
 			return false; 
 		}
-			else if(type==2) {
+			else if(type==boardManager.RIGHT_COLLISION) {
 			
 			for (int i = 0; i < boardManager.getWallsSize(); i++) {
 
@@ -48,7 +48,7 @@ public class CheckCollision {
 		}
 		
 		public boolean checkTopOrBottomWallCollision(Actor actor, int type) {
-		if(type==3) {
+		if(type==boardManager.TOP_COLLISION) {
 			for (int i = 0; i < boardManager.getWallsSize(); i++) {
 
 				Wall wall = boardManager.getWalls(i);
@@ -61,7 +61,7 @@ public class CheckCollision {
 
 			return false;
 		}
-		else if(type==4) {
+		else if(type==boardManager.BOTTOM_COLLISION) {
 
 			for (int i = 0; i < boardManager.getWallsSize(); i++) {
 
@@ -83,7 +83,7 @@ public class CheckCollision {
 
 	public boolean checkBagCollision(int type) { 
 
-		if(type==1) { 
+		if(type==boardManager.LEFT_COLLISION) { 
 
 			for (int i = 0; i < boardManager.getBaggsSize(); i++) {
 
@@ -102,12 +102,12 @@ public class CheckCollision {
 							}
 						}
 
-						if (checkWallCollision(this.bag, Board.LEFT_COLLISION)) {
+						if (checkWallCollision(this.bag, boardManager.LEFT_COLLISION)) {
 							return true;
 						}
 					}
 					
-					this.bag.move(-Board.SPACE, 0);
+					this.bag.move(-boardManager.SPACE, 0);
 					boardManager.setFlag(true);
 					boardManager.setBags(this.bag);
 
@@ -117,7 +117,7 @@ public class CheckCollision {
 
 			return false;
 		}
-		if(type==2) { 
+		if(type==boardManager.RIGHT_COLLISION) { 
 
 			for (int i = 0; i < boardManager.getBaggsSize(); i++) {
 
@@ -136,12 +136,12 @@ public class CheckCollision {
 							}
 						}
 
-						if (checkWallCollision(bag, Board.RIGHT_COLLISION)) { 
+						if (checkWallCollision(bag, boardManager.RIGHT_COLLISION)) { 
 							return true;
 						}
 					}
 					
-					bag.move(Board.SPACE, 0);
+					bag.move(boardManager.SPACE, 0);
 					boardManager.setFlag(true);
 					boardManager.setBags(bag);
 					
@@ -154,7 +154,7 @@ public class CheckCollision {
 		return checkTopOrBottomBagCollision(type);
 	}
 	public boolean checkTopOrBottomBagCollision(int type) {
-		if(type==3) {
+		if(type==boardManager.TOP_COLLISION) {
 
 			for (int i = 0; i < boardManager.getBaggsSize(); i++) {
 				
@@ -173,12 +173,12 @@ public class CheckCollision {
 							}
 						}
 
-						if (checkWallCollision(bag, Board.TOP_COLLISION)) {
+						if (checkWallCollision(bag, boardManager.TOP_COLLISION)) {
 							return true;
 						}
 					}
 
-					bag.move(0, -Board.SPACE);
+					bag.move(0, -boardManager.SPACE);
 					boardManager.setFlag(true);
 					boardManager.setBags(bag);
 
@@ -188,7 +188,7 @@ public class CheckCollision {
 
 			return false;
 		}
-		if(type==4) {
+		if(type==boardManager.BOTTOM_COLLISION) {
 
 			for (int i = 0; i < boardManager.getBaggsSize(); i++) {
 
@@ -207,13 +207,13 @@ public class CheckCollision {
 							}
 						}
 
-						if (checkWallCollision(bag, Board.BOTTOM_COLLISION)) {
+						if (checkWallCollision(bag, boardManager.BOTTOM_COLLISION)) {
 
 							return true;
 						}
 					}
 
-					bag.move(0, Board.SPACE);
+					bag.move(0, boardManager.SPACE);
 					boardManager.setFlag(true);
 					boardManager.setBags(bag);
 

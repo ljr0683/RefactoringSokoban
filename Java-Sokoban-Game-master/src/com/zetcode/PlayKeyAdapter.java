@@ -9,8 +9,6 @@ import javax.swing.Timer;
 
 public class PlayKeyAdapter extends KeyAdapter {
 
-	public static int SPACE = 64;
-
 	private Board board;
 	private CheckCollision checkCollision;
 	private MyTimer time;
@@ -82,16 +80,16 @@ public class PlayKeyAdapter extends KeyAdapter {
 
 	public void keyLeftPressed(KeyEvent e) {
 
-		if (checkCollision.checkWallCollision(boardManager.getSoko(), Board.LEFT_COLLISION)) { // soko객체 왼쪽에 벽이 있다면 움직이지 않고 키 이벤트를 끝냄
+		if (checkCollision.checkWallCollision(boardManager.getSoko(), boardManager.LEFT_COLLISION)) { // soko객체 왼쪽에 벽이 있다면 움직이지 않고 키 이벤트를 끝냄
 			return;
 		}
 
-		if (checkCollision.checkBagCollision(Board.LEFT_COLLISION)) {
+		if (checkCollision.checkBagCollision(boardManager.LEFT_COLLISION)) {
 			return;
 		}
 
-		boardManager.getSoko().move(-SPACE, 0); // 만약 위 상황을 만족하지 않는다면 왼쪽으로 한칸 움직임.
-		boardManager.getSoko().changePlayerVector(Board.LEFT_COLLISION);
+		boardManager.getSoko().move(-boardManager.SPACE, 0); // 만약 위 상황을 만족하지 않는다면 왼쪽으로 한칸 움직임.
+		boardManager.getSoko().changePlayerVector(boardManager.LEFT_COLLISION);
 		boardManager.boardIncreaseMoveCount();
 
 		if (boardManager.getFlag()) {
@@ -107,7 +105,7 @@ public class PlayKeyAdapter extends KeyAdapter {
 			boardManager.setIsCollision(false);
 		}
 
-		boardManager.replayDequeOffer(Board.LEFT_COLLISION);
+		boardManager.replayDequeOffer(boardManager.LEFT_COLLISION);
 
 		if (boardManager.getBags() != null) {
 			boardManager.isEntered(boardManager.getBags());
@@ -125,16 +123,16 @@ public class PlayKeyAdapter extends KeyAdapter {
 	}
 
 	public void keyRightPressed(KeyEvent e) {
-		if (checkCollision.checkWallCollision(boardManager.getSoko(), Board.RIGHT_COLLISION)) {
+		if (checkCollision.checkWallCollision(boardManager.getSoko(), boardManager.RIGHT_COLLISION)) {
 			return;
 		}
 
-		if (checkCollision.checkBagCollision(Board.RIGHT_COLLISION)) {
+		if (checkCollision.checkBagCollision(boardManager.RIGHT_COLLISION)) {
 			return;
 		}
 
-		boardManager.getSoko().move(SPACE, 0);
-		boardManager.getSoko().changePlayerVector(Board.RIGHT_COLLISION);
+		boardManager.getSoko().move(boardManager.SPACE, 0);
+		boardManager.getSoko().changePlayerVector(boardManager.RIGHT_COLLISION);
 		boardManager.boardIncreaseMoveCount();
 
 		if (boardManager.getFlag()) {
@@ -150,7 +148,7 @@ public class PlayKeyAdapter extends KeyAdapter {
 			boardManager.setIsCollision(false);
 		}
 
-		boardManager.replayDequeOffer(Board.RIGHT_COLLISION);
+		boardManager.replayDequeOffer(boardManager.RIGHT_COLLISION);
 
 		if (boardManager.getBags() != null) {
 			boardManager.isEntered(boardManager.getBags());
@@ -168,16 +166,16 @@ public class PlayKeyAdapter extends KeyAdapter {
 
 	public void keyUpPressed(KeyEvent e) {
 
-		if (checkCollision.checkWallCollision(boardManager.getSoko(), Board.TOP_COLLISION)) {
+		if (checkCollision.checkWallCollision(boardManager.getSoko(), boardManager.TOP_COLLISION)) {
 			return;
 		}
 
-		if (checkCollision.checkBagCollision(Board.TOP_COLLISION)) {
+		if (checkCollision.checkBagCollision(boardManager.TOP_COLLISION)) {
 			return;
 		}
 
-		boardManager.getSoko().move(0, -SPACE);
-		boardManager.getSoko().changePlayerVector(Board.TOP_COLLISION);
+		boardManager.getSoko().move(0, -boardManager.SPACE);
+		boardManager.getSoko().changePlayerVector(boardManager.TOP_COLLISION);
 		boardManager.boardIncreaseMoveCount();
 
 		if (boardManager.getFlag()) {
@@ -193,7 +191,7 @@ public class PlayKeyAdapter extends KeyAdapter {
 			boardManager.setIsCollision(false);
 		}
 
-		boardManager.replayDequeOffer(Board.TOP_COLLISION);
+		boardManager.replayDequeOffer(boardManager.TOP_COLLISION);
 
 		if (boardManager.getBags() != null) {
 			boardManager.isEntered(boardManager.getBags());
@@ -212,16 +210,16 @@ public class PlayKeyAdapter extends KeyAdapter {
 
 	public void keyDownPressed(KeyEvent e) {
 
-		if (checkCollision.checkWallCollision(boardManager.getSoko(), Board.BOTTOM_COLLISION)) {
+		if (checkCollision.checkWallCollision(boardManager.getSoko(), boardManager.BOTTOM_COLLISION)) {
 			return;
 		}
 
-		if (checkCollision.checkBagCollision(Board.BOTTOM_COLLISION)) {
+		if (checkCollision.checkBagCollision(boardManager.BOTTOM_COLLISION)) {
 			return;
 		}
 
-		boardManager.getSoko().move(0, SPACE);
-		boardManager.getSoko().changePlayerVector(Board.BOTTOM_COLLISION);
+		boardManager.getSoko().move(0, boardManager.SPACE);
+		boardManager.getSoko().changePlayerVector(boardManager.BOTTOM_COLLISION);
 		boardManager.boardIncreaseMoveCount();
 
 		if (boardManager.getFlag()) {
@@ -237,7 +235,7 @@ public class PlayKeyAdapter extends KeyAdapter {
 			boardManager.setIsCollision(false);
 		}
 
-		boardManager.replayDequeOffer(Board.BOTTOM_COLLISION);
+		boardManager.replayDequeOffer(boardManager.BOTTOM_COLLISION);
 
 		if (boardManager.getBags() != null) {
 			boardManager.isEntered(boardManager.getBags());

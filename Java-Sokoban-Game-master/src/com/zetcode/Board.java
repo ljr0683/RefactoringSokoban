@@ -40,11 +40,7 @@ public class Board extends JPanel {
 	private String selectCharacter;
 
 	private final int OFFSET = 30;
-	public static int SPACE = 64;
-	public static final int LEFT_COLLISION = 1;
-	public static final int RIGHT_COLLISION = 2;
-	public static final int TOP_COLLISION = 3;
-	public static final int BOTTOM_COLLISION = 4;
+	private final int SPACE = 64;
 
 	private ArrayList<Wall> walls;
 	private ArrayList<Baggage> baggs;
@@ -358,7 +354,6 @@ public class Board extends JPanel {
 		undo();
 	}
 	
-		
 	class MyMouseListener extends MouseAdapter{
 		public void mouseClicked(MouseEvent e) {
 			JLabel la = (JLabel)e.getSource();

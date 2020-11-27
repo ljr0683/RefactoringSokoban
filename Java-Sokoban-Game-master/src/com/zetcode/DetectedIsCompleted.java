@@ -1,5 +1,6 @@
 package com.zetcode;
 
+import java.awt.Font;
 import java.io.File;
 
 import javax.swing.ImageIcon;
@@ -12,11 +13,15 @@ public class DetectedIsCompleted {
 	private Timer timer;
 	private MyTimer time;
 	private int timerCount;
+	private int score;
+	private boolean isReplay;
 	
-	public DetectedIsCompleted(BoardManager boardManager, Timer timer, MyTimer time) {
+	public DetectedIsCompleted(BoardManager boardManager, Timer timer, MyTimer time, boolean isReplay) {
+		this.isReplay = false;
 		this.boardManager = boardManager;
 		this.timer = timer;
 		this.time = time;
+		this.isReplay = isReplay;
 	}
 	
 	public void isCompleted() { // 다 최종지점에 넣었을경우 isCompleted=true Replay에서 사용중
@@ -44,7 +49,6 @@ public class DetectedIsCompleted {
 			boardManager.boardSetZeroMoveCount();
 			timer.stop();
 			String s = "Completed";
-			System.out.println("1234");
 			FileIO replayFileIo = new FileIO();
 			int size = boardManager.getReplayDequeSize();
 			
@@ -60,16 +64,27 @@ public class DetectedIsCompleted {
 				if(!scoreFileFolder.exists())
 					scoreFileFolder.mkdir();
 				File scoreFile = new File("src/score/score_"+boardManager.getLevelSelected()+".txt");
-				Score score = new Score(boardManager.getLevelSelected(), boardManager.getMoveCount(), timerCount, scoreFile);
+				Score computeScore = new Score(boardManager.getLevelSelected(), boardManager.getMoveCount(), timerCount, scoreFile);
+				score = computeScore.computeScore();
 			}
+			
 			
 			boardManager.setIsCompleted(true); // 따라서 끝남
 			
 			ImageIcon completeImage = new ImageIcon("src/resources/Complete & Failed/Complete.png");
 			JLabel completeLabel = new JLabel(completeImage);
 			
+			Font scoreFont = new Font("배달의민족 도현", Font.BOLD, 30);
+			JLabel scoreLabel = new JLabel("YourScore :" + score);
+			scoreLabel.setFont(scoreFont);
+			
 			boardManager.attachLabel(completeLabel);
 			completeLabel.setBounds(0, 0, boardManager.getwidth(), boardManager.getHeight());
+			
+			if(!isReplay) {
+				boardManager.attachLabel(scoreLabel);
+				scoreLabel.setBounds(530, 150, 500, 60);
+			}
 			
 		}
 	}

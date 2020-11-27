@@ -29,6 +29,12 @@ public class BoardManager {
 	private int levelSelected;
 	private boolean isReplay;
 	
+	public int SPACE = 64;
+	public final int LEFT_COLLISION = 1;
+	public final int RIGHT_COLLISION = 2;
+	public final int TOP_COLLISION = 3;
+	public final int BOTTOM_COLLISION = 4;
+	
 	public BoardManager(ArrayList<Wall> walls, ArrayList<Baggage> baggs, ArrayList<Area> areas, int width, int height, Player soko, Board board, int levelSelected, boolean isReplay, Timer timer, MyTimer time) {
 		this.walls = walls;
 		this.baggs = baggs;
@@ -38,7 +44,7 @@ public class BoardManager {
 		this.soko = soko;
 		this.checkCollision = new CheckCollision(this);
 		this.failedDetected = new FailedDetected(this);
-		this.detectedIsCompleted = new DetectedIsCompleted(this, timer, time);
+		this.detectedIsCompleted = new DetectedIsCompleted(this, timer, time, isReplay);
 		this.board = board;
 		this.levelSelected = levelSelected;
 		this.isReplay = isReplay;

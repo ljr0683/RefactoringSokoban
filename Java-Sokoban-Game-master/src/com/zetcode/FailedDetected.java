@@ -51,7 +51,7 @@ public class FailedDetected {
 	}
 	
 	private boolean wallTopBottomCollision(Baggage bag) {
-		if (boardManager.getCheckWallCollision(bag, Board.TOP_COLLISION) || boardManager.getCheckWallCollision(bag, Board.BOTTOM_COLLISION)) { // 위, 아래 벽 두개 // 리팩토링 완료
+		if (boardManager.getCheckWallCollision(bag, boardManager.TOP_COLLISION) || boardManager.getCheckWallCollision(bag, boardManager.BOTTOM_COLLISION)) { // 위, 아래 벽 두개 // 리팩토링 완료
 
 			for (int i = 0; i < boardManager.getWallsSize(); i++) {
 				Wall item1 = boardManager.getWalls(i); //item1 = 위에 있는 벽
@@ -71,7 +71,7 @@ public class FailedDetected {
 					}
 				}
 			}
-			if (boardManager.getCheckWallCollision(bag, Board.LEFT_COLLISION) || boardManager.getCheckWallCollision(bag, Board.RIGHT_COLLISION)) {
+			if (boardManager.getCheckWallCollision(bag, boardManager.LEFT_COLLISION) || boardManager.getCheckWallCollision(bag, boardManager.RIGHT_COLLISION)) {
 				return true;
 			}
 		}
@@ -80,7 +80,7 @@ public class FailedDetected {
 	}
 	
 	private boolean wallLeftRightCollison(Baggage bag) {
-		if (boardManager.getCheckWallCollision(bag, Board.LEFT_COLLISION) || boardManager.getCheckWallCollision(bag, Board.RIGHT_COLLISION)) { // 왼, 오른쪽 벽 2개 리팩토링 끝
+		if (boardManager.getCheckWallCollision(bag, boardManager.LEFT_COLLISION) || boardManager.getCheckWallCollision(bag, boardManager.RIGHT_COLLISION)) { // 왼, 오른쪽 벽 2개 리팩토링 끝
 			for (int i = 0; i < boardManager.getWallsSize(); i++) {
 
 				Wall item1 = boardManager.getWalls(i);
@@ -109,7 +109,7 @@ public class FailedDetected {
 	}
 	
 	private boolean oneWallTopOrBottom(Baggage bag) {
-		if (boardManager.getCheckWallCollision(bag, Board.TOP_COLLISION) || boardManager.getCheckWallCollision(bag, Board.BOTTOM_COLLISION)) { // 위에 벽 1개 , 아래 벽 1개 수정한거임 리팩토링
+		if (boardManager.getCheckWallCollision(bag, boardManager.TOP_COLLISION) || boardManager.getCheckWallCollision(bag, boardManager.BOTTOM_COLLISION)) { // 위에 벽 1개 , 아래 벽 1개 수정한거임 리팩토링
 			for (int i = 0; i < boardManager.getBaggsSize(); i++) {
 				Baggage item1 = boardManager.getBaggs(i);
 				LeftRightBagCollision(bag, item1);
@@ -155,7 +155,7 @@ public class FailedDetected {
 	}
 	
 	private boolean oneWallLeftOrRight(Baggage bag) {
-		if (boardManager.getCheckWallCollision(bag, Board.LEFT_COLLISION) || boardManager.getCheckWallCollision(bag, Board.RIGHT_COLLISION)) { 
+		if (boardManager.getCheckWallCollision(bag, boardManager.LEFT_COLLISION) || boardManager.getCheckWallCollision(bag, boardManager.RIGHT_COLLISION)) { 
 			for (int i = 0; i < boardManager.getBaggsSize(); i++) {
 				Baggage item1 = boardManager.getBaggs(i);
 				topBottomBagCollosion(bag, item1);

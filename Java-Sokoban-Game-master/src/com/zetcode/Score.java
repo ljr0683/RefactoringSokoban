@@ -25,8 +25,7 @@ public class Score {
 				BufferedReader bufReader = new BufferedReader(fr);
 				
 				do {
-					score = Integer.parseInt(bufReader.readLine()) - 48;
-					
+					score = Integer.parseInt(bufReader.readLine());
 				} while(bufReader.readLine() != null);
 				
 			}catch(IOException e) {
@@ -34,10 +33,9 @@ public class Score {
 			}
 			
 		}
-		computeScore();
 	}
 	
-	private void computeScore() {
+	public int computeScore() {
 		int currentScore = maxScore - (moveCount * 3) - (timerCount * 2);
 		
 		if(currentScore>score) {
@@ -45,6 +43,7 @@ public class Score {
 			score = currentScore;
 			createFile.scoreFileInput(levelSelected, score);
 		}
+		return currentScore;
 	}
 	
 }
