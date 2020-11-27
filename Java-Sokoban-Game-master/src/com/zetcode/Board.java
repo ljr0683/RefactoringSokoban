@@ -28,7 +28,6 @@ public class Board extends JPanel {
 	private MyTimer time;
 	private Timer timer;
 	private BoardManager boardManager;
-	private ReplayKeyAdapter replayKeyAdapter;
 	
 	private ImageIcon backSpaceIcon ;
 	private JLabel backSpaceLabel ;
@@ -46,7 +45,7 @@ public class Board extends JPanel {
 	private ArrayList<Baggage> baggs;
 	private ArrayList<Area> areas;
 
-	private Player soko;
+	private GamePlayer soko;
 	private int w = 0;
 	private int h = 0;
 
@@ -74,11 +73,9 @@ public class Board extends JPanel {
 		initBoard(levelSelected, previousPanel, frame, selectCharacter);
 	}
 
-	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, Replay replay, String selectCharacter, ReplayKeyAdapter replayKeyAdapter) { // 리플레이 일때
+	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, Replay replay, String selectCharacter) { // 리플레이 일때
 
 		this.file = file;
-		
-		this.replayKeyAdapter = replayKeyAdapter;
 		this.replay = replay;
 		isReplay = true;
 		
@@ -173,7 +170,7 @@ public class Board extends JPanel {
 				break;
 
 			case '@':
-				soko = new Player(x, y, selectCharacter); // 플레이어임
+				soko = new GamePlayer(x, y, selectCharacter); // 플레이어임
 				x += SPACE;
 				break;
 
@@ -202,11 +199,11 @@ public class Board extends JPanel {
 				
 			}
 			replay.setBoardManager(boardManager);
-			replayKeyAdapter.setBoardManager(boardManager);
+			ReplayKeyAdapter replayKeyAdapter = new ReplayKeyAdapter(boardManager, replay);
 			addKeyListener(replayKeyAdapter);
 			
 		}else {
-			addKeyListener(new PlayKeyAdapter(this, time, mode, timer, boardManager, boomLabel));
+			addKeyListener(new PlayKeyAdapter(time, mode, timer, boardManager, boomLabel));
 			
 		}
 		
@@ -237,7 +234,7 @@ public class Board extends JPanel {
 
 				g.drawImage(item.getImage(), item.x() + 16, item.y() + 16, this);
 			}
-			else if(item instanceof Player) {
+			else if(item instanceof GamePlayer) {
 				if(selectCharacter.equals("Mario")) { // 마리오 일때
 					g.drawImage(item.getImage(), item.x(), item.y() , this);
 					

@@ -1,14 +1,9 @@
 package com.zetcode;
 
 public class CheckCollision {
-	private Board board;
 	private BoardManager boardManager;
 	private Baggage bag;
 	private Baggage item;
-	
-	public CheckCollision(Board board) {
-		this.board = board;
-	}
 	
 	public CheckCollision(BoardManager boardManager) {
 		this.boardManager = boardManager;

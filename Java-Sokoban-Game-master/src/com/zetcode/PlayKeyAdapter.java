@@ -8,34 +8,36 @@ import javax.swing.JLabel;
 import javax.swing.Timer;
 
 public class PlayKeyAdapter extends KeyAdapter {
-
-	private Board board;
 	private CheckCollision checkCollision;
 	private MyTimer time;
 	private Timer timer;
 	private BoardManager boardManager;
 	private JLabel[] boomLabel;
+	private Music music;
 
 	private int mode;
 
-	public PlayKeyAdapter(Board board, MyTimer time, int mode, Timer timer, BoardManager boardManager, JLabel[] boomLabel) {
-		this.board = board;
+	public PlayKeyAdapter(MyTimer time, int mode, Timer timer, BoardManager boardManager, JLabel[] boomLabel) {
+		
 		this.time = time;
 		this.mode = mode;
 		this.timer = timer;
 		this.boardManager = boardManager;
 		this.checkCollision = new CheckCollision(boardManager);
 		this.boomLabel = boomLabel;
+		music = new Music(true);
+		music.start();
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-
 		if (boardManager.getIsCompleted()) { // 게임이 끝남.
+			music.close();
 			return;
 		}
 
 		if (boardManager.getIsFailed()) {
+			music.close();
 			timer.stop();
 			return;
 		}
@@ -66,7 +68,7 @@ public class PlayKeyAdapter extends KeyAdapter {
 
 				Wall next = boardManager.getWalls(i);
 
-				if (next instanceof Llm && board.getMoveCount() >= 1) {
+				if (next instanceof Llm && boardManager.getMoveCount() >= 1) {
 
 					((Llm) next).rellm();
 
@@ -74,7 +76,7 @@ public class PlayKeyAdapter extends KeyAdapter {
 			}
 		} // 이부분까지 설정
 
-		board.repaint();
+		boardManager.repaint();
 		return;
 	}
 
@@ -254,7 +256,7 @@ public class PlayKeyAdapter extends KeyAdapter {
 	public void keyReturnPressed(KeyEvent e) {
 
 		time.time = 0;
-		board.restartLevel();
+		boardManager.restartLevel();
 		
 		return;
 	}

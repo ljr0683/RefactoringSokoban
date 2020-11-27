@@ -18,7 +18,7 @@ public class BoardManager {
 	private ArrayList<Wall> walls;
 	private ArrayList<Baggage> baggs;
 	private ArrayList<Area> areas;
-	private Player soko;
+	private GamePlayer soko;
 	private int width;
 	private int height;
 	private CheckCollision checkCollision;
@@ -29,13 +29,13 @@ public class BoardManager {
 	private int levelSelected;
 	private boolean isReplay;
 	
-	public int SPACE = 64;
+	public final int SPACE = 64;
 	public final int LEFT_COLLISION = 1;
 	public final int RIGHT_COLLISION = 2;
 	public final int TOP_COLLISION = 3;
 	public final int BOTTOM_COLLISION = 4;
 	
-	public BoardManager(ArrayList<Wall> walls, ArrayList<Baggage> baggs, ArrayList<Area> areas, int width, int height, Player soko, Board board, int levelSelected, boolean isReplay, Timer timer, MyTimer time) {
+	public BoardManager(ArrayList<Wall> walls, ArrayList<Baggage> baggs, ArrayList<Area> areas, int width, int height, GamePlayer soko, Board board, int levelSelected, boolean isReplay, Timer timer, MyTimer time) {
 		this.walls = walls;
 		this.baggs = baggs;
 		this.areas = areas;
@@ -141,7 +141,7 @@ public class BoardManager {
 		}
 	}
 	
-	public Player getSoko() {
+	public GamePlayer getSoko() {
 		return soko;
 	}
 	

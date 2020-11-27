@@ -6,29 +6,27 @@ import java.io.File;
 
 public class ReplayKeyAdapter extends KeyAdapter{
 	Replay replay;
-	Board board;
 	BoardManager boardManager;
+	Music music;
+
 	
-	public ReplayKeyAdapter(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, String selectCharacter, Replay replay) {
+	public ReplayKeyAdapter(BoardManager boardManager, Replay replay) {
+		this.boardManager = boardManager;
 		this.replay = replay;
-		createBoard(levelSelected, previousPanel, frame, file, replay, selectCharacter);
-	}
-	
-	private void createBoard(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file,Replay replay, String selectCharacter) {
-		board = new Board(levelSelected, previousPanel, frame, file, replay, selectCharacter, this);
-		int width = boardManager.getwidth();
-		int height = boardManager.getHeight();
-		frame.changePanel(board, width, height);
+		music = new Music(true);
+		music.start();
 	}
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
 		
 		if (boardManager.getIsCompleted()) { // 게임이 끝남.
+			music.close();
 			return;
 		}
 
 		if (boardManager.getIsFailed()) {
+			music.close();
 			return;
 		}
 		
@@ -50,10 +48,6 @@ public class ReplayKeyAdapter extends KeyAdapter{
 		boardManager.callIsCompleted();
 		boardManager.repaint();
 			
-	}
-	
-	public void setBoardManager(BoardManager boardManager) {
-		this.boardManager = boardManager;
 	}
 }
 

@@ -15,6 +15,7 @@ public class Replay {
 	
 	Replay(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, String selectCharacter){
 		replay_Deque = new LinkedList<>();
+		this.boardManager = boardManager;
 		
 		this.file = file;
 		
@@ -29,8 +30,6 @@ public class Replay {
 			e.printStackTrace();
 		}
 		
-		
-		ReplayKeyAdapter replayKeyAdapter = new ReplayKeyAdapter(levelSelected, previousPanel, frame, file, selectCharacter, this);
 	}
 	
 	Replay(BoardManager boardManager){

@@ -33,6 +33,7 @@ public class LevelSelectPanel extends JPanel {
 	private SelectCharacterPanel previousPanel;
 	private LevelSelectPanel panel;
 	private BoardManager boardManager;
+	private Replay replay;
 	
 	private int width, height; // 게임의 크기 설정하기 위함
 	private int levelSelected;
@@ -154,12 +155,16 @@ public class LevelSelectPanel extends JPanel {
 				file = new File(filePath);
 				
 				if(file.exists()) {
-					Replay replay = new Replay(levelSelected, panel, frame, file, selectCharacter);
+					replay = new Replay(levelSelected, panel, frame, file, selectCharacter);
 					notExitsReplayLabel.setVisible(false);
 				}
 				else {
 					notExitsReplayLabel.setVisible(true);
 				}
+				Board board = new Board(levelSelected, panel, frame, file, replay, selectCharacter);
+				width = boardManager.getwidth();
+				height = boardManager.getHeight();
+				frame.changePanel(board, width, height);
 				
 			}
 			
@@ -175,6 +180,10 @@ public class LevelSelectPanel extends JPanel {
 				else {
 					notExitsReplayLabel.setVisible(true);
 				}
+				Board board = new Board(levelSelected, panel, frame, file, replay, selectCharacter);
+				width = boardManager.getwidth();
+				height = boardManager.getHeight();
+				frame.changePanel(board, width, height);
 				
 			}
 		}
