@@ -47,8 +47,8 @@ public class ReplayKeyAdapter extends KeyAdapter{
 		default:
 			break;
 		}
-		board.isCompleted();
-		board.repaint();
+		boardManager.callIsCompleted();
+		boardManager.repaint();
 			
 	}
 	

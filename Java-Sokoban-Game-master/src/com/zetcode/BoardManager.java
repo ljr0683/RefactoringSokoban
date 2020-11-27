@@ -5,6 +5,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 import javax.swing.JLabel;
+import javax.swing.Timer;
 
 public class BoardManager {
 	
@@ -22,11 +23,13 @@ public class BoardManager {
 	private int height;
 	private CheckCollision checkCollision;
 	private FailedDetected failedDetected;
+	private DetectedIsCompleted detectedIsCompleted;
 	private Baggage bags = null;
 	private Board board;
 	private int levelSelected;
+	private boolean isReplay;
 	
-	public BoardManager(ArrayList<Wall> walls, ArrayList<Baggage> baggs, ArrayList<Area> areas, int width, int height, Player soko, Board board, int levelSelected) {
+	public BoardManager(ArrayList<Wall> walls, ArrayList<Baggage> baggs, ArrayList<Area> areas, int width, int height, Player soko, Board board, int levelSelected, boolean isReplay, Timer timer, MyTimer time) {
 		this.walls = walls;
 		this.baggs = baggs;
 		this.areas = areas;
@@ -34,9 +37,11 @@ public class BoardManager {
 		this.height = height;
 		this.soko = soko;
 		this.checkCollision = new CheckCollision(this);
-		failedDetected = new FailedDetected(this);
+		this.failedDetected = new FailedDetected(this);
+		this.detectedIsCompleted = new DetectedIsCompleted(this, timer, time);
 		this.board = board;
 		this.levelSelected = levelSelected;
+		this.isReplay = isReplay;
 	}
 	
 	public void isEntered(Baggage bag) {
@@ -48,7 +53,7 @@ public class BoardManager {
 		}
 	}
 	
-	public void callIsFailedDetected(Baggage bags) { //Replay에서 사용
+	public void callIsFailedDetected(Baggage bags) {
 		if(failedDetected.isFailedDetected(bags)) {
 			failedDetected.isFailed();
 		}
@@ -111,6 +116,10 @@ public class BoardManager {
 		return baggs.get(i);
 	}
 	
+	public Area getAreas(int i) {
+		return areas.get(i);
+	}
+	
 	public int getBaggsSize() {
 		return baggs.size();
 	}
@@ -165,6 +174,10 @@ public class BoardManager {
 		board.increaseMoveCount();
 	}
 	
+	public int getMoveCount() {
+		return board.getMoveCount();
+	}
+	
 	public void attachLabel(JLabel label) {
 		board.add(label);
 	}
@@ -186,5 +199,17 @@ public class BoardManager {
 		if(replay_Deque.isEmpty()) 
 			return true;
 		return false;
+	}
+	
+	public boolean getIsReplay() {
+		return isReplay;
+	}
+	
+	public void callIsCompleted() {
+		detectedIsCompleted.isCompleted();
+	}
+	
+	public void repaint() {
+		board.repaint();
 	}
 }

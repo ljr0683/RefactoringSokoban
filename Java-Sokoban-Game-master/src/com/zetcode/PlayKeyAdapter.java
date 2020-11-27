@@ -108,8 +108,8 @@ public class PlayKeyAdapter extends KeyAdapter {
 		if (boardManager.getBags() != null) {
 			boardManager.isEntered(boardManager.getBags());
 			if (boardManager.getBags().getIsEntered()) {
-				board.isCompleted();
-				board.repaint();
+				boardManager.callIsCompleted();
+				boardManager.repaint();
 				return;
 			}
 		}
@@ -153,8 +153,8 @@ public class PlayKeyAdapter extends KeyAdapter {
 		if (boardManager.getBags() != null) {
 			boardManager.isEntered(boardManager.getBags());
 			if (boardManager.getBags().getIsEntered()) {
-				board.isCompleted();
-				board.repaint();
+				boardManager.callIsCompleted();
+				boardManager.repaint();
 				return;
 			}
 		}
@@ -200,8 +200,8 @@ public class PlayKeyAdapter extends KeyAdapter {
 		if (boardManager.getBags() != null) {
 			boardManager.isEntered(boardManager.getBags());
 			if (boardManager.getBags().getIsEntered()) {
-				board.isCompleted();
-				board.repaint();
+				boardManager.callIsCompleted();
+				boardManager.repaint();
 				return;
 			}
 		}
@@ -248,8 +248,8 @@ public class PlayKeyAdapter extends KeyAdapter {
 		if (boardManager.getBags() != null) {
 			boardManager.isEntered(boardManager.getBags());
 			if (boardManager.getBags().getIsEntered()) {
-				board.isCompleted();
-				board.repaint();
+				boardManager.callIsCompleted();
+				boardManager.repaint();
 				return;
 			}
 		}
