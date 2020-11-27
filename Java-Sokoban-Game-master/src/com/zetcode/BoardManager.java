@@ -2,10 +2,14 @@ package com.zetcode;
 
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.LinkedList;
 
 import javax.swing.JLabel;
 
 public class BoardManager {
+	
+	private Deque<Integer> replay_Deque = new LinkedList<>(); 
+	
 	private boolean isCompleted;
 	private boolean isFailed;
 	private boolean isCollision;
@@ -30,15 +34,12 @@ public class BoardManager {
 		this.height = height;
 		this.soko = soko;
 		this.checkCollision = new CheckCollision(this);
-		System.out.println(width);
-		System.out.println(height);
 		failedDetected = new FailedDetected(this);
 		this.board = board;
 		this.levelSelected = levelSelected;
 	}
 	
 	public void isEntered(Baggage bag) {
-		System.out.println(bag);
 		for (int i = 0; i < areas.size(); i++) {
 			Area area = areas.get(i);
 			if (bag.x() == area.x() && bag.y() == area.y()) {
@@ -141,13 +142,27 @@ public class BoardManager {
 		return false;
 	}
 	
-	
 	public Deque<Integer> getReplayDeque(){
-		return board.getReplayDeque();
+		if(!replay_Deque.isEmpty()) {
+			return replay_Deque;
+		}
+		return null;
 	}
 	
-	public void boardSetMoveCount() {
+	public int getReplayDequeSize() {
+		return replay_Deque.size();
+	}
+	
+	public void replayDequeOffer(int keyDirection) {
+		replay_Deque.offer(keyDirection);
+	}
+	
+	public void boardSetZeroMoveCount() {
 		board.setZeroMoveCount();;
+	}
+	
+	public void boardIncreaseMoveCount() {
+		board.increaseMoveCount();
 	}
 	
 	public void attachLabel(JLabel label) {
@@ -161,5 +176,15 @@ public class BoardManager {
 	public void restartLevel() {
 		board.setZeroMoveCount();
 		board.restartLevel();
+	}
+	
+	public void undo() {
+		board.callUndo();
+	}
+	
+	public boolean getReplayDequeEmpty() {
+		if(replay_Deque.isEmpty()) 
+			return true;
+		return false;
 	}
 }

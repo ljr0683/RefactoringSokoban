@@ -132,8 +132,6 @@ public class LevelSelectPanel extends JPanel {
 				Board board = new Board(levelSelected, panel, frame, selectCharacter, 0);
 				width = boardManager.getwidth();
 				height = boardManager.getHeight();
-				System.out.println(width);
-				System.out.println(height);
 				frame.changePanel(board, width, height);
 				startLabel.setIcon(startIcon);
 				notExitsReplayLabel.setVisible(false);
@@ -142,7 +140,6 @@ public class LevelSelectPanel extends JPanel {
 			if(la.equals(randomStartLabel)) {
 				Random rand = new Random(System.currentTimeMillis());
 				int mode = rand.nextInt(5);
-				System.out.println(mode);
 				Board board = new Board(levelSelected, panel, frame, selectCharacter, mode);
 				width = boardManager.getwidth();
 				height = boardManager.getHeight();

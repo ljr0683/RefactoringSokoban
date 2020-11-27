@@ -18,9 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class Board extends JPanel {
-
-	private Deque<Integer> replay_Deque = new LinkedList<>(); 
-
+	
 	private int undoCount;
 	private int moveCount;
 	private int limitturn;
@@ -89,16 +87,6 @@ public class Board extends JPanel {
 
 		this.file = file;
 		
-		try {
-			FileReader fr = new FileReader(file);
-			int c;
-			while ((c = fr.read()) != -1) {
-				replay_Deque.offer(c - 48);
-			}
-			fr.close();
-		} catch (IOException e) {
-			
-		}
 		this.replayKeyAdapter = replayKeyAdapter;
 		this.replay = replay;
 		isReplay = true;
@@ -212,11 +200,23 @@ public class Board extends JPanel {
 		boardManager = new BoardManager(walls, baggs, areas, w, h, soko, this, levelSelected);
 		previousPanel.setBoardManager(boardManager);
 		if(replay !=null) {
+			try {
+				FileReader fr = new FileReader(file);
+				int c;
+				while ((c = fr.read()) != -1) {
+					boardManager.replayDequeOffer(c - 48);
+				}
+				fr.close();
+			} catch (IOException e) {
+				
+			}
 			replay.setBoardManager(boardManager);
 			replayKeyAdapter.setBoardManager(boardManager);
 			addKeyListener(replayKeyAdapter);
+			
 		}else {
 			addKeyListener(new PlayKeyAdapter(this, time, mode, timer, boardManager));
+			
 		}
 		
 	}
@@ -265,6 +265,9 @@ public class Board extends JPanel {
 				g.drawString("ExtraUndo : " + Integer.toString(undoCount), w-90, 18);
 				if(mode==3) {
 				g.drawString("MoveLimited : " + limitturn , w-90, 80);
+				if(limitturn <= moveCount) {
+					boardManager.isFailed();
+		    	}
 				}
 			}
 		}
@@ -275,12 +278,6 @@ public class Board extends JPanel {
 				
 			}
 		}
-		
-		if(mode==3) {
-			if(limitturn <= moveCount) {
-				boardManager.isFailed();
-	    	}
-        }
 		
 		if(!isReplay) {
 			if(time.notMoveTime==4) {
@@ -345,17 +342,16 @@ public class Board extends JPanel {
 			String s = "Completed";
 
 			FileIO replayFileIo = new FileIO();
-			int size = replay_Deque.size();
+			int size = boardManager.getReplayDequeSize();
 			
 			for (int i = 0; i < size; i++) {
-				replayFileIo.enqueue(replay_Deque.poll());
+				replayFileIo.enqueue(boardManager.getReplayDeque().poll());
 			}
 			
 			replayFileIo.replayFileInput(levelSelected, s);
 			
 			if(!isReplay) { // replay가 아닐만 스코어 계산
 				this.timerCount = time.getTime();
-				time.setIsFinished(true);
 				File scoreFileFolder = new File("src/score");
 				if(!scoreFileFolder.exists())
 					scoreFileFolder.mkdir();
@@ -371,7 +367,6 @@ public class Board extends JPanel {
 			add(completeLabel);
 			completeLabel.setBounds(0, 0, w, h);
 			
-			repaint(); // 컴포넌트의 모양 색상등이 바뀌었을때 사용
 		}
 	}
 
@@ -387,9 +382,10 @@ public class Board extends JPanel {
 		boardManager.setIsFailed(false);
 	}
 	
-	public void undo() {
-		if(!replay_Deque.isEmpty()) {
+	 private void undo() {
+		if(!boardManager.getReplayDequeEmpty()) {
 			if(undoCount>0) {
+				Deque<Integer> replay_Deque = boardManager.getReplayDeque(); // 이쪽 수정함 replayDeque를 없앴음 위쪽에
 				int key = replay_Deque.pollLast();
 				replay = new Replay(boardManager);
 				replay.offerReplay_Deque(key);
@@ -415,19 +411,10 @@ public class Board extends JPanel {
 		return moveCount;
 	}
 	
-	public void replayDequeOffer(int keyDirection) {
-		replay_Deque.offer(keyDirection);
+	public void callUndo() {
+		undo();
 	}
 	
-	public boolean getReplayDequeEmpty() {
-		if(replay_Deque.isEmpty()) 
-			return true;
-		return false;
-	}
-	
-	public Deque<Integer> getReplayDeque(){
-		return replay_Deque;
-	}
 		
 	class MyMouseListener extends MouseAdapter{
 		public void mouseClicked(MouseEvent e) {

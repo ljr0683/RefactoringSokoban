@@ -49,7 +49,6 @@ public class CheckCollision {
 		
 		public boolean checkTopOrBottomWallCollision(Actor actor, int type) {
 		if(type==3) {
-			System.out.println(boardManager);
 			for (int i = 0; i < boardManager.getWallsSize(); i++) {
 
 				Wall wall = boardManager.getWalls(i);

@@ -20,7 +20,7 @@ public class FailedDetected {
 		
 		if(boardManager.getIsFailed()) {
 			this.replay_Deque = boardManager.getReplayDeque();
-			boardManager.boardSetMoveCount();
+			boardManager.boardSetZeroMoveCount();
 			String s = "Failed";
 
 			FileIO fileio = new FileIO();
