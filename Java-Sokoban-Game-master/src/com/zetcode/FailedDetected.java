@@ -22,15 +22,16 @@ public class FailedDetected {
 			this.replay_Deque = boardManager.getReplayDeque();
 			boardManager.boardSetZeroMoveCount();
 			String s = "Failed";
-
 			FileIO fileio = new FileIO();
-			int size = replay_Deque.size();
-
-			for (int i = 0; i < size; i++) {
-				fileio.enqueue(replay_Deque.poll());
+			if(replay_Deque!=null) {
+				int size = replay_Deque.size();
+			
+				for (int i = 0; i < size; i++) {
+					fileio.enqueue(replay_Deque.poll());
+				}
+	
+				fileio.replayFileInput(boardManager.getLevelSelected(), s);
 			}
-
-			fileio.replayFileInput(boardManager.getLevelSelected(), s);
 			
 			ImageIcon failedImage = new ImageIcon("src/resources/Complete & Failed/Failed.png");
 			JLabel failedLabel = new JLabel(failedImage);

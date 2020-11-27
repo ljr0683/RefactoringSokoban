@@ -21,8 +21,6 @@ public class Board extends JPanel {
 	private int undoCount;
 	private int moveCount;
 	private int limitturn;
-	private UIManager frame;
-	private LevelSelectPanel previousPanel;
 	private File file;
 	private Replay replay;
 	private MyTimer time;
@@ -51,7 +49,7 @@ public class Board extends JPanel {
 
 	private boolean isReplay = false;
 
-	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, String selectCharacter, int mode) {
+	public Board(int levelSelected, String selectCharacter, int mode, BoardManager boardManager) {
 
 		this.moveCount = 0;
 		undoCount = 3;
@@ -65,31 +63,30 @@ public class Board extends JPanel {
 			boomLabel[i].setVisible(true);
 			add(boomLabel[i]);
 		}
-		
+		this.boardManager = boardManager;
 		this.mode = mode;
 		
 		limitturn = 500;
 	
-		initBoard(levelSelected, previousPanel, frame, selectCharacter);
+		initBoard(levelSelected, selectCharacter);
 	}
 
-	public Board(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, Replay replay, String selectCharacter) { // 리플레이 일때
+	public Board(int levelSelected, File file, Replay replay, String selectCharacter, BoardManager boardManager) { // 리플레이 일때
 
 		this.file = file;
 		this.replay = replay;
 		isReplay = true;
-		
-		initBoard(levelSelected, previousPanel, frame, selectCharacter);
+		this.boardManager = boardManager;
+		initBoard(levelSelected, selectCharacter);
 		
 	}
 
-	private void initBoard(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, String selectCharacter) {
+	private void initBoard(int levelSelected, String selectCharacter) {
 		
 		setLayout(null);
 
-		this.previousPanel = previousPanel;
 		this.levelSelected = levelSelected;
-		this.frame = frame;
+		
 		this.selectCharacter = selectCharacter;
 		backSpaceIcon = new ImageIcon("src/resources/BackSpace/BackSpace.png");
 		backSpaceLabel = new JLabel(backSpaceIcon);
@@ -184,9 +181,6 @@ public class Board extends JPanel {
 
 			h = y; // 높이를 정함.
 		}
-
-		boardManager = new BoardManager(walls, baggs, areas, w, h, soko, this, levelSelected, isReplay, timer, time);
-		previousPanel.setBoardManager(boardManager);
 		if(replay !=null) {
 			try {
 				FileReader fr = new FileReader(file);
@@ -198,12 +192,11 @@ public class Board extends JPanel {
 			} catch (IOException e) {
 				
 			}
-			replay.setBoardManager(boardManager);
-			ReplayKeyAdapter replayKeyAdapter = new ReplayKeyAdapter(boardManager, replay);
-			addKeyListener(replayKeyAdapter);
+
+			addKeyListener(boardManager.getReplayKeyAdapter()); //boardManager getReplayAdapter 만들기
 			
 		}else {
-			addKeyListener(new PlayKeyAdapter(time, mode, timer, boardManager, boomLabel));
+			addKeyListener(boardManager.getPlayKeyAdapter()); // boardManager.getPlayKeyAdpater 만들기
 			
 		}
 		
@@ -351,12 +344,52 @@ public class Board extends JPanel {
 		undo();
 	}
 	
+	public ArrayList<Wall> getWalls(){
+		return walls;
+	}
+	
+	public ArrayList<Area> getAreas(){
+		return areas;
+	}
+	
+	public ArrayList<Baggage> getBaggs(){
+		return baggs;
+	}
+	
+	public int getHeight() {
+		return h;
+	}
+	
+	public int getWidth() {
+		return w;
+	}
+	
+	public GamePlayer getSoko() {
+		return soko;
+	}
+	
+	public Timer getTimer() {
+		return timer;
+	}
+	
+	public MyTimer gettime() {
+		return time;
+	}
+	
+	public JLabel[] getBoomLabel() {
+		return boomLabel;
+	}
+	
+	public int getMode() {
+		return mode;
+	}
+	
 	class MyMouseListener extends MouseAdapter{
 		public void mouseClicked(MouseEvent e) {
 			JLabel la = (JLabel)e.getSource();
 			if(la.equals(backSpaceLabel)) {
 				time.setIsFinished(true);
-				frame.changePanel(previousPanel);
+				boardManager.changePanel();
 				boardManager.setIsFailed(false);
 				time.notMoveTime = 0;
 				moveCount=0;

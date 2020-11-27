@@ -10,6 +10,8 @@ public class Sokoban {
 		EventQueue.invokeLater(() -> {
 			UIManager game = new UIManager();
 			game.setVisible(true);
+			Music music = new Music(true);
+			music.start();
 		});
 	}
 }

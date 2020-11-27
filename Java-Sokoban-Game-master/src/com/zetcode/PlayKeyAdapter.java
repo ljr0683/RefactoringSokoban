@@ -13,7 +13,6 @@ public class PlayKeyAdapter extends KeyAdapter {
 	private Timer timer;
 	private BoardManager boardManager;
 	private JLabel[] boomLabel;
-	private Music music;
 
 	private int mode;
 
@@ -25,24 +24,22 @@ public class PlayKeyAdapter extends KeyAdapter {
 		this.boardManager = boardManager;
 		this.checkCollision = new CheckCollision(boardManager);
 		this.boomLabel = boomLabel;
-		music = new Music(true);
-		music.start();
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if (boardManager.getIsCompleted()) { // 게임이 끝남.
-			music.close();
 			return;
 		}
 
 		if (boardManager.getIsFailed()) {
-			music.close();
 			timer.stop();
 			return;
 		}
-		for(int i=0; i<boomLabel.length; i++) {
-			boomLabel[i].setVisible(false);
+		if(boomLabel!=null) {
+			for(int i=0; i<boomLabel.length; i++) {
+				boomLabel[i].setVisible(false);
+			}
 		}
 
 		int key = e.getKeyCode();

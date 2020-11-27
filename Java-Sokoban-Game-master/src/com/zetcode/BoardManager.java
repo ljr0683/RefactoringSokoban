@@ -1,5 +1,6 @@
 package com.zetcode;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -28,6 +29,13 @@ public class BoardManager {
 	private Board board;
 	private int levelSelected;
 	private boolean isReplay;
+	private UIManager frame;
+	private LevelSelectPanel previousPanel;
+	private JLabel boomLabel[];
+	private int mode;
+	private Timer timer;
+	private MyTimer time;
+	private Replay replay;
 	
 	public final int SPACE = 64;
 	public final int LEFT_COLLISION = 1;
@@ -35,19 +43,46 @@ public class BoardManager {
 	public final int TOP_COLLISION = 3;
 	public final int BOTTOM_COLLISION = 4;
 	
-	public BoardManager(ArrayList<Wall> walls, ArrayList<Baggage> baggs, ArrayList<Area> areas, int width, int height, GamePlayer soko, Board board, int levelSelected, boolean isReplay, Timer timer, MyTimer time) {
-		this.walls = walls;
-		this.baggs = baggs;
-		this.areas = areas;
-		this.width = width;
-		this.height = height;
-		this.soko = soko;
+	public BoardManager(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, String selectCharacter, int mode) {
+		board = new Board(levelSelected, selectCharacter, mode, this);
+		isReplay = false;
+		getData();
+		this.frame = frame;
+		this.previousPanel = previousPanel;
+		frame.changePanel(board, width, height);
+	}
+	
+	public BoardManager(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, Replay replay, String selectCharacter) {
+		this.replay = replay;
+		replay.setBoardManager(this);
+		board = new Board(levelSelected, file, replay, selectCharacter, this);
+		System.out.println(replay);
+		isReplay = true;
+		getData();
+		this.frame = frame;
+		this.previousPanel = previousPanel;
+		frame.changePanel(board, width, height);
+	}
+	
+	private void getData() {
+		this.walls = board.getWalls();
+		this.baggs = board.getBaggs();
+		this.areas = board.getAreas();
+		this.width = board.getWidth();
+		this.height = board.getHeight();
+		this.soko = board.getSoko();
 		this.checkCollision = new CheckCollision(this);
 		this.failedDetected = new FailedDetected(this);
+		this.timer = board.getTimer();
+		this.time = board.gettime();
 		this.detectedIsCompleted = new DetectedIsCompleted(this, timer, time, isReplay);
-		this.board = board;
-		this.levelSelected = levelSelected;
-		this.isReplay = isReplay;
+		this.mode = board.getMode();
+		this.boomLabel = board.getBoomLabel();
+		
+	}
+	
+	public void changePanel() {
+		frame.changePanel(previousPanel);
 	}
 	
 	public void isEntered(Baggage bag) {
@@ -213,6 +248,15 @@ public class BoardManager {
 	
 	public void callIsCompleted() {
 		detectedIsCompleted.isCompleted();
+	}
+	
+	public PlayKeyAdapter getPlayKeyAdapter() {
+		return new PlayKeyAdapter(time, mode, timer, this, boomLabel);
+	}
+	
+	public ReplayKeyAdapter getReplayKeyAdapter() {
+		System.out.println(replay);
+		return new ReplayKeyAdapter(this, replay);
 	}
 	
 	public void repaint() {

@@ -15,7 +15,6 @@ public class Replay {
 	
 	Replay(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, String selectCharacter){
 		replay_Deque = new LinkedList<>();
-		this.boardManager = boardManager;
 		
 		this.file = file;
 		
@@ -25,6 +24,7 @@ public class Replay {
 			while((c = fr.read()) != -1) {
 				replay_Deque.offer(c-48);
 			}
+			System.out.println(replay_Deque);
 			fr.close();
 		}catch(IOException e) {
 			e.printStackTrace();
@@ -159,7 +159,6 @@ public class Replay {
 				replay_Deque.offerFirst(key3);
 		}
 	}
-	
 	
 	public void goAhead() {
 		int key2 = replay_Deque.poll();

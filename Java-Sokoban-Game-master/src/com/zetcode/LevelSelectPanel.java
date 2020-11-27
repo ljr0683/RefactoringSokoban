@@ -32,7 +32,6 @@ public class LevelSelectPanel extends JPanel {
 	private UIManager frame;
 	private SelectCharacterPanel previousPanel;
 	private LevelSelectPanel panel;
-	private BoardManager boardManager;
 	private Replay replay;
 	
 	private int width, height; // 게임의 크기 설정하기 위함
@@ -117,10 +116,6 @@ public class LevelSelectPanel extends JPanel {
 		g.drawImage(backGroundImage.getImage(), 0, 0, this);
 	}
 	
-	public void setBoardManager(BoardManager boardManager) {
-		this.boardManager = boardManager;
-	}
-	
 	class MyMouseListener extends MouseAdapter{
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -130,10 +125,7 @@ public class LevelSelectPanel extends JPanel {
 			}
 			
 			if(la.equals(startLabel)) {
-				Board board = new Board(levelSelected, panel, frame, selectCharacter, 0);
-				width = boardManager.getwidth();
-				height = boardManager.getHeight();
-				frame.changePanel(board, width, height);
+				BoardManager boardManager = new BoardManager(levelSelected, panel, frame, selectCharacter, 0);
 				startLabel.setIcon(startIcon);
 				notExitsReplayLabel.setVisible(false);
 			}
@@ -141,10 +133,7 @@ public class LevelSelectPanel extends JPanel {
 			if(la.equals(randomStartLabel)) {
 				Random rand = new Random(System.currentTimeMillis());
 				int mode = rand.nextInt(5);
-				Board board = new Board(levelSelected, panel, frame, selectCharacter, mode);
-				width = boardManager.getwidth();
-				height = boardManager.getHeight();
-				frame.changePanel(board, width, height);
+				BoardManager boardManager = new BoardManager(levelSelected, panel, frame, selectCharacter, mode);
 				randomStartLabel.setIcon(randomStartIcon);
 				notExitsReplayLabel.setVisible(false);
 			}
@@ -161,10 +150,7 @@ public class LevelSelectPanel extends JPanel {
 				else {
 					notExitsReplayLabel.setVisible(true);
 				}
-				Board board = new Board(levelSelected, panel, frame, file, replay, selectCharacter);
-				width = boardManager.getwidth();
-				height = boardManager.getHeight();
-				frame.changePanel(board, width, height);
+				BoardManager boardManager = new BoardManager(levelSelected, panel, frame, file, replay, selectCharacter);
 				
 			}
 			
@@ -174,16 +160,13 @@ public class LevelSelectPanel extends JPanel {
 				file = new File(filePath);
 				
 				if(file.exists()) {
-					Replay replay = new Replay(levelSelected, panel, frame, file, selectCharacter);
+					replay = new Replay(levelSelected, panel, frame, file, selectCharacter);
 					notExitsReplayLabel.setVisible(false);
 				}
 				else {
 					notExitsReplayLabel.setVisible(true);
 				}
-				Board board = new Board(levelSelected, panel, frame, file, replay, selectCharacter);
-				width = boardManager.getwidth();
-				height = boardManager.getHeight();
-				frame.changePanel(board, width, height);
+				BoardManager boardManager = new BoardManager(levelSelected, panel, frame, file, replay, selectCharacter);
 				
 			}
 		}
@@ -205,7 +188,5 @@ public class LevelSelectPanel extends JPanel {
 			startLabel.setIcon(startIcon);
 			randomStartLabel.setIcon(randomStartIcon);
 		}
-		
-		
 	}
 }
