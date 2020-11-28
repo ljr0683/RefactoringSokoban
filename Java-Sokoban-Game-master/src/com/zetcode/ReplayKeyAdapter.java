@@ -5,43 +5,40 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 
 public class ReplayKeyAdapter extends KeyAdapter{
-	private Replay replay;
-	private BoardManager boardManager;
+	private GameManager gameManager;
 
 	
-	public ReplayKeyAdapter(BoardManager boardManager, Replay replay) {
-		this.boardManager = boardManager;
-		this.replay = replay;
+	public ReplayKeyAdapter(GameManager gameManager) {
+		this.gameManager = gameManager;
 	}
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
 		
-		if (boardManager.getIsCompleted()) { // 게임이 끝남.
+		if (gameManager.getIsCompleted()) { // 게임이 끝남.
 			return;
 		}
 
-		if (boardManager.getIsFailed()) {
+		if (gameManager.getIsFailed()) {
 			return;
 		}
-		
 		
 		int key1 = e.getKeyCode();
 		
 		switch (key1) {
 		case KeyEvent.VK_LEFT:
-			replay.goBack();
+			gameManager.replayGoBack();
 			break;
 			
 		case KeyEvent.VK_RIGHT:
-			replay.goAhead();
+			gameManager.replayGoAhead();
 			break;
 		
 		default:
 			break;
 		}
-		boardManager.callIsCompleted();
-		boardManager.repaint();
+		gameManager.callIsCompleted();
+		gameManager.repaint();
 	}
 }
 

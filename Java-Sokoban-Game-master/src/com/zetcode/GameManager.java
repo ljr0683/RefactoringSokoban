@@ -8,9 +8,9 @@ import java.util.LinkedList;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
-public class BoardManager {
+public class GameManager {
 	
-	private Deque<Integer> replay_Deque = new LinkedList<>(); 
+	private Deque<Integer> replay_Deque ; 
 	
 	private boolean isCompleted;
 	private boolean isFailed;
@@ -22,8 +22,8 @@ public class BoardManager {
 	private GamePlayer soko;
 	private int width;
 	private int height;
-	private CheckCollision checkCollision;
-	private FailedDetected failedDetected;
+	private DetectedCheckCollision detectedCheckCollision;
+	private DetectedIsFailed detectedIsFailed;
 	private DetectedIsCompleted detectedIsCompleted;
 	private Baggage bags = null;
 	private Board board;
@@ -43,7 +43,8 @@ public class BoardManager {
 	public final int TOP_COLLISION = 3;
 	public final int BOTTOM_COLLISION = 4;
 	
-	public BoardManager(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, String selectCharacter, int mode) {
+	public GameManager(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, String selectCharacter, int mode) {
+		replay_Deque = new LinkedList<>();
 		board = new Board(levelSelected, selectCharacter, mode, this);
 		isReplay = false;
 		getData();
@@ -52,10 +53,10 @@ public class BoardManager {
 		frame.changePanel(board, width, height);
 	}
 	
-	public BoardManager(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, String selectCharacter) {
+	public GameManager(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, String selectCharacter) {
+		replay_Deque = new LinkedList<>();
 		this.replay = new Replay(levelSelected, file, selectCharacter, this);
-		board = new Board(levelSelected, file, replay, selectCharacter, this);
-		System.out.println(replay);
+		board = new Board(levelSelected, file, selectCharacter, this, true);
 		isReplay = true;
 		getData();
 		this.frame = frame;
@@ -70,14 +71,12 @@ public class BoardManager {
 		this.width = board.getWidth();
 		this.height = board.getHeight();
 		this.soko = board.getSoko();
-		this.checkCollision = new CheckCollision(this);
-		this.failedDetected = new FailedDetected(this);
-		this.timer = board.getTimer();
+		this.detectedCheckCollision = new DetectedCheckCollision(this);
+		this.detectedIsFailed = new DetectedIsFailed(this);
 		this.time = board.gettime();
 		this.detectedIsCompleted = new DetectedIsCompleted(this, timer, time, isReplay);
 		this.mode = board.getMode();
 		this.boomLabel = board.getBoomLabel();
-		
 	}
 	
 	public void changePanel() {
@@ -94,14 +93,14 @@ public class BoardManager {
 	}
 	
 	public void callIsFailedDetected(Baggage bags) {
-		if(failedDetected.isFailedDetected(bags)) {
-			failedDetected.isFailed();
+		if(detectedIsFailed.isFailedDetected(bags)) {
+			detectedIsFailed.isFailed();
 		}
 		return;
 	}
 	
 	public void isFailed() {
-		failedDetected.isFailed();
+		detectedIsFailed.isFailed();
 	}
 	
 	public void setIsCompleted(boolean isCompleted) {
@@ -180,13 +179,13 @@ public class BoardManager {
 	}
 	
 	public boolean getCheckWallCollision(Actor actor, int type) {
-		if(checkCollision.checkWallCollision(actor, type))
+		if(detectedCheckCollision.checkWallCollision(actor, type))
 			return true;
 		return false;
 	}
 	
 	public boolean getCheckBagCollision(int type) {
-		if(checkCollision.checkBagCollision(type))
+		if(detectedCheckCollision.checkBagCollision(type))
 			return true;
 		return false;
 	}
@@ -232,7 +231,19 @@ public class BoardManager {
 	}
 	
 	public void undo() {
-		board.callUndo();
+		if(!replay_Deque.isEmpty()) {
+			if(board.getUndoCount()>0) {
+				int key = replay_Deque.pollLast();
+				replay = new Replay(this);
+				replay.offerReplay_Deque(key);
+				if(key == 5 || key == 6) {
+					key = replay_Deque.pollLast();
+					replay.offerReplay_Deque(key);
+				}
+				replay.goBack();
+				board.decreaseUndoCount();
+			}
+		}
 	}
 	
 	public boolean getReplayDequeEmpty() {
@@ -254,11 +265,22 @@ public class BoardManager {
 	}
 	
 	public ReplayKeyAdapter getReplayKeyAdapter() {
-		System.out.println(replay);
-		return new ReplayKeyAdapter(this, replay);
+		return new ReplayKeyAdapter(this);
 	}
 	
 	public void repaint() {
 		board.repaint();
+	}
+	
+	public void replayGoBack() {
+		replay.goBack();
+	}
+	
+	public void replayGoAhead() {
+		replay.goAhead();
+	}
+	
+	public void setTimer(Timer timer) {
+		this.timer = timer;
 	}
 }

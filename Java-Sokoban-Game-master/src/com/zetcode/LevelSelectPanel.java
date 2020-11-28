@@ -18,35 +18,47 @@ public class LevelSelectPanel extends JPanel {
 	private JLabel scoreLabel;
 	private JLabel notExitsReplayLabel;
 	
-	ImageIcon backSpaceIcon = new ImageIcon("src/resources/BackSpace/BackSpace.png");
-	ImageIcon startIcon = new ImageIcon("src/resources/GameStartImage/Start.png");
-	ImageIcon enteredStartIcon = new ImageIcon("src/resources/GameStartImage/EnteredStart.png");
-	ImageIcon randomStartIcon = new ImageIcon("src/resources/GameStartImage/RandomStart.png");
-	ImageIcon enteredRandomStartIcon = new ImageIcon("src/resources/GameStartImage/EnteredRandomStart.png");
-	ImageIcon completedIcon = new ImageIcon("src/resources/GameStartImage/Completed.png");
-	ImageIcon failedIcon = new ImageIcon("src/resources/GameStartImage/Failed.png");
+	ImageIcon randomStartIcon ;
+	ImageIcon startIcon ;
 	
 	private File file;
-	private File scoreFile;
 	
 	private UIManager frame;
 	private SelectCharacterPanel previousPanel;
 	private LevelSelectPanel panel;
+
+	private GameManager gameManager;
 	
 	private int levelSelected;
 	private int score;
 	
 	public LevelSelectPanel(UIManager frame, SelectCharacterPanel previousPanel, int levelSelected, String selectCharacter) {
-		
 		setLayout(null);
 		
+		randomStartIcon = new ImageIcon("src/resources/GameStartImage/RandomStart.png");
+		startIcon = new ImageIcon("src/resources/GameStartImage/Start.png");
 		panel = this;
 		
 		this.frame=frame;
 		this.previousPanel=previousPanel;
 		this.levelSelected=levelSelected;
 		this.selectCharacter = selectCharacter;
-		scoreFile = new File("src/score/score_"+levelSelected+".txt");
+		
+		readScoreFile();
+		
+		setLabel();
+		
+		addItemToPanel();
+		
+		setLabelBound();
+		
+		addListener();
+		
+		notExitsReplayLabel.setVisible(false);
+	}
+	
+	private void readScoreFile() {
+		File scoreFile = new File("src/score/score_"+levelSelected+".txt");
 		if(!scoreFile.exists()) {
 			score = 0;
 		}
@@ -65,12 +77,16 @@ public class LevelSelectPanel extends JPanel {
 				e.printStackTrace();
 			}
 		}
-		
+	}
+	
+	private void setLabel() {
+		ImageIcon backSpaceIcon = new ImageIcon("src/resources/BackSpace/BackSpace.png");
+		ImageIcon completedIcon = new ImageIcon("src/resources/GameStartImage/Completed.png");
+		ImageIcon failedIcon = new ImageIcon("src/resources/GameStartImage/Failed.png");
 		startLabel = new JLabel(startIcon);
 		randomStartLabel = new JLabel(randomStartIcon);
 		completedReplayLabel = new JLabel(completedIcon);
 		failedReplayLabel = new JLabel(failedIcon);
-		
 		backSpaceLabel = new JLabel(backSpaceIcon);
 		backGroundImage = new ImageIcon("src/resources/Background/DefaultBackground.png");
 		
@@ -81,15 +97,9 @@ public class LevelSelectPanel extends JPanel {
 		Font replayFileNotExitsFont = new Font("배달의 민족 도현", Font.BOLD, 50);
 		notExitsReplayLabel = new JLabel("Replay File Not Exits");
 		notExitsReplayLabel.setFont(replayFileNotExitsFont);
-		
-		add(backSpaceLabel);
-		add(completedReplayLabel);
-		add(failedReplayLabel);
-		add(startLabel);
-		add(randomStartLabel);
-		add(scoreLabel);
-		add(notExitsReplayLabel);
-		
+	}
+	
+	private void setLabelBound() {
 		backSpaceLabel.setBounds(25, 20, 128, 128);
 		completedReplayLabel.setBounds(400, 700, 96, 96);
 		failedReplayLabel.setBounds(600, 700, 96, 96);
@@ -97,16 +107,25 @@ public class LevelSelectPanel extends JPanel {
 		randomStartLabel.setBounds(1000, 700, 96, 96);
 		scoreLabel.setBounds(530, 150, 500, 60);
 		notExitsReplayLabel.setBounds(500, 250, 700, 200);
-		
-		
-		backSpaceLabel.addMouseListener(new MyMouseListener()); // 뒤로가기 버튼에 액션리스너 등록
+		notExitsReplayLabel.setForeground(new Color(255, 0, 0));
+	}
+	
+	private void addItemToPanel() {
+		add(backSpaceLabel);
+		add(completedReplayLabel);
+		add(failedReplayLabel);
+		add(startLabel);
+		add(randomStartLabel);
+		add(scoreLabel);
+		add(notExitsReplayLabel);
+	}
+	
+	private void addListener() {
+		backSpaceLabel.addMouseListener(new MyMouseListener()); 
 		completedReplayLabel.addMouseListener(new MyMouseListener());
 		failedReplayLabel.addMouseListener(new MyMouseListener());
 		startLabel.addMouseListener(new MyMouseListener());
 		randomStartLabel.addMouseListener(new MyMouseListener());
-		
-		notExitsReplayLabel.setForeground(new Color(255, 0, 0));
-		notExitsReplayLabel.setVisible(false);
 	}
 	
 	@Override
@@ -123,7 +142,7 @@ public class LevelSelectPanel extends JPanel {
 			}
 			
 			if(la.equals(startLabel)) {
-				BoardManager boardManager = new BoardManager(levelSelected, panel, frame, selectCharacter, 0);
+				gameManager = new GameManager(levelSelected, panel, frame, selectCharacter, 0);
 				startLabel.setIcon(startIcon);
 				notExitsReplayLabel.setVisible(false);
 			}
@@ -131,46 +150,24 @@ public class LevelSelectPanel extends JPanel {
 			if(la.equals(randomStartLabel)) {
 				Random rand = new Random(System.currentTimeMillis());
 				int mode = rand.nextInt(5);
-				BoardManager boardManager = new BoardManager(levelSelected, panel, frame, selectCharacter, mode);
+				gameManager = new GameManager(levelSelected, panel, frame, selectCharacter, mode);
 				randomStartLabel.setIcon(randomStartIcon);
 				notExitsReplayLabel.setVisible(false);
 			}
 			
 			if(la.equals(completedReplayLabel)) {
-				String s = "Completed";
-				String filePath = "src\\replay\\"+s+"_replay_"+levelSelected+".txt";
-				file = new File(filePath);
-				
-				if(file.exists()) {
-					notExitsReplayLabel.setVisible(false);
-
-					BoardManager boardManager = new BoardManager(levelSelected, panel, frame, file, selectCharacter);
-				}
-				else {
-					notExitsReplayLabel.setVisible(true);
-				}
-				
+				replayFileReadAndStart("Completed");
 			}
 			
 			if(la.equals(failedReplayLabel)) {
-				String s = "Failed";
-				String filePath = "src\\replay\\"+s+"_replay_"+levelSelected+".txt";
-				file = new File(filePath);
-				
-				if(file.exists()) {
-					notExitsReplayLabel.setVisible(false);
-
-					BoardManager boardManager = new BoardManager(levelSelected, panel, frame, file,  selectCharacter);
-				}
-				else {
-					notExitsReplayLabel.setVisible(true);
-				}
-				
+				replayFileReadAndStart("Failed");
 			}
 		}
 		
 		@Override
 		public void mouseEntered(MouseEvent e) {
+			ImageIcon enteredStartIcon = new ImageIcon("src/resources/GameStartImage/EnteredStart.png");
+			ImageIcon enteredRandomStartIcon = new ImageIcon("src/resources/GameStartImage/EnteredRandomStart.png");
 			JLabel la= (JLabel)e.getSource();
 			if(la.equals(startLabel)) {
 				startLabel.setIcon(enteredStartIcon);
@@ -185,6 +182,19 @@ public class LevelSelectPanel extends JPanel {
 		public void mouseExited(MouseEvent e) {
 			startLabel.setIcon(startIcon);
 			randomStartLabel.setIcon(randomStartIcon);
+		}
+	}
+	
+	public void replayFileReadAndStart(String s) {
+		String filePath = "src\\replay\\"+s+"_replay_"+levelSelected+".txt";
+		file = new File(filePath);
+		
+		if(file.exists()) {
+			notExitsReplayLabel.setVisible(false);
+			gameManager = new GameManager(levelSelected, panel, frame, file, selectCharacter);
+		}
+		else {
+			notExitsReplayLabel.setVisible(true);
 		}
 	}
 }

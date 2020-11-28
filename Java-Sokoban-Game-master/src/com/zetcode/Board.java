@@ -22,10 +22,9 @@ public class Board extends JPanel {
 	private int moveCount;
 	private int limitturn;
 	private File file;
-	private Replay replay;
 	private MyTimer time;
 	private Timer timer;
-	private BoardManager boardManager;
+	private GameManager gameManager;
 	
 	private ImageIcon backSpaceIcon ;
 	private JLabel backSpaceLabel ;
@@ -49,7 +48,7 @@ public class Board extends JPanel {
 
 	private boolean isReplay = false;
 
-	public Board(int levelSelected, String selectCharacter, int mode, BoardManager boardManager) {
+	public Board(int levelSelected, String selectCharacter, int mode, GameManager gameManager) {
 
 		this.moveCount = 0;
 		undoCount = 3;
@@ -63,7 +62,7 @@ public class Board extends JPanel {
 			boomLabel[i].setVisible(true);
 			add(boomLabel[i]);
 		}
-		this.boardManager = boardManager;
+		this.gameManager = gameManager;
 		this.mode = mode;
 		
 		limitturn = 500;
@@ -71,12 +70,11 @@ public class Board extends JPanel {
 		initBoard(levelSelected, selectCharacter);
 	}
 
-	public Board(int levelSelected, File file, Replay replay, String selectCharacter, BoardManager boardManager) { // 리플레이 일때
+	public Board(int levelSelected, File file, String selectCharacter, GameManager gameManager, boolean isReplay) { // 리플레이 일때
 
 		this.file = file;
-		this.replay = replay;
-		isReplay = true;
-		this.boardManager = boardManager;
+		this.isReplay = isReplay;
+		this.gameManager = gameManager;
 		initBoard(levelSelected, selectCharacter);
 		
 	}
@@ -181,22 +179,23 @@ public class Board extends JPanel {
 
 			h = y; // 높이를 정함.
 		}
-		if(replay !=null) {
+		if(isReplay) {
 			try {
 				FileReader fr = new FileReader(file);
 				int c;
 				while ((c = fr.read()) != -1) {
-					boardManager.replayDequeOffer(c - 48);
+					gameManager.replayDequeOffer(c - 48);
 				}
 				fr.close();
 			} catch (IOException e) {
 				
 			}
-
-			addKeyListener(boardManager.getReplayKeyAdapter()); //boardManager getReplayAdapter 만들기
+			gameManager.setTimer(timer);
+			addKeyListener(gameManager.getReplayKeyAdapter()); //boardManager getReplayAdapter 만들기
 			
 		}else {
-			addKeyListener(boardManager.getPlayKeyAdapter()); // boardManager.getPlayKeyAdpater 만들기
+			gameManager.setTimer(timer);
+			addKeyListener(gameManager.getPlayKeyAdapter()); // boardManager.getPlayKeyAdpater 만들기
 			
 		}
 		
@@ -231,12 +230,12 @@ public class Board extends JPanel {
 				if(selectCharacter.equals("Mario")) { // 마리오 일때
 					g.drawImage(item.getImage(), item.x(), item.y() , this);
 					
-				}else { // 노란모자 일때
+				}else { 
 					g.drawImage(item.getImage(), item.x() + 13, item.y() , this);
 				}
 			}
 			else {
-				Actor.setMode(mode); // 없어지는 모드인지 그냥인지 판별하기 위해
+				Actor.setMode(mode); 
 				g.drawImage(item.getImage(), item.x(), item.y(), this);
 			}
 			
@@ -247,34 +246,18 @@ public class Board extends JPanel {
 				if(mode==3) {
 				g.drawString("MoveLimited : " + limitturn , w-90, 80);
 				if(limitturn <= moveCount) {
-					boardManager.isFailed();
+					gameManager.isFailed();
 		    	}
 				}
 			}
 		}
 		
-		if (boardManager.getIsFailed()) {
+		boomLabelAttach();
+		
+		if (gameManager.getIsFailed()) {
 			if(!isReplay) {
 				time.setIsFinished(true);
 				
-			}
-		}
-		
-		if(!isReplay) {
-			if(time.notMoveTime==4) {
-				boomLabel[0].setBounds(w/2-200, 50, 64, 64);
-				boomLabel[0].setVisible(true);
-			}
-			if(time.notMoveTime==5) {
-				boomLabel[0].setVisible(false);
-				boomLabel[1].setBounds(w/2, 50, 64, 64);
-				boomLabel[1].setVisible(true);
-			}
-			if(time.notMoveTime==6) {
-				boomLabel[1].setVisible(false);
-				boomLabel[2].setBounds(w/2+200, 50, 64, 64);
-				boomLabel[2].setVisible(true);
-				boardManager.isFailed();
 			}
 		}
 		
@@ -289,6 +272,26 @@ public class Board extends JPanel {
 		g.setColor(Color.BLUE);
 		String nowTurn = Integer.toString(moveCount);
 		g.drawString("MoveCount : " + nowTurn,  w-90, 60);
+		}
+	}
+	
+	private void boomLabelAttach() {
+		if(!isReplay) {
+			if(time.notMoveTime==4) {
+				boomLabel[0].setBounds(w/2-200, 50, 64, 64);
+				boomLabel[0].setVisible(true);
+			}
+			if(time.notMoveTime==5) {
+				boomLabel[0].setVisible(false);
+				boomLabel[1].setBounds(w/2, 50, 64, 64);
+				boomLabel[1].setVisible(true);
+			}
+			if(time.notMoveTime==6) {
+				boomLabel[1].setVisible(false);
+				boomLabel[2].setBounds(w/2+200, 50, 64, 64);
+				boomLabel[2].setVisible(true);
+				gameManager.isFailed();
+			}
 		}
 	}
 	
@@ -307,27 +310,9 @@ public class Board extends JPanel {
 
 		initWorld();
 
-		boardManager.setIsCompleted(false);
-		boardManager.setIsFailed(false);
+		gameManager.setIsCompleted(false);
+		gameManager.setIsFailed(false);
 	}
-	
-	 private void undo() {
-		if(!boardManager.getReplayDequeEmpty()) {
-			if(undoCount>0) {
-				Deque<Integer> replay_Deque = boardManager.getReplayDeque(); // 이쪽 수정함 replayDeque를 없앴음 위쪽에
-				int key = replay_Deque.pollLast();
-				replay = new Replay(boardManager);
-				replay.offerReplay_Deque(key);
-				if(key == 5 || key == 6) {
-					key = replay_Deque.pollLast();
-					replay.offerReplay_Deque(key);
-				}
-				replay.goBack();
-				undoCount--;
-			}
-		}
-	}
-	
 	public void setZeroMoveCount() {
 		this.moveCount=0;
 	}
@@ -340,8 +325,14 @@ public class Board extends JPanel {
 		return moveCount;
 	}
 	
-	public void callUndo() {
-		undo();
+	public int getUndoCount() {
+		return undoCount;
+	}
+	
+	public void decreaseUndoCount() {
+		if(undoCount>0) {
+			undoCount--;
+		}
 	}
 	
 	public ArrayList<Wall> getWalls(){
@@ -368,10 +359,6 @@ public class Board extends JPanel {
 		return soko;
 	}
 	
-	public Timer getTimer() {
-		return timer;
-	}
-	
 	public MyTimer gettime() {
 		return time;
 	}
@@ -389,8 +376,8 @@ public class Board extends JPanel {
 			JLabel la = (JLabel)e.getSource();
 			if(la.equals(backSpaceLabel)) {
 				time.setIsFinished(true);
-				boardManager.changePanel();
-				boardManager.setIsFailed(false);
+				gameManager.changePanel();
+				gameManager.setIsFailed(false);
 				time.notMoveTime = 0;
 				moveCount=0;
 			}

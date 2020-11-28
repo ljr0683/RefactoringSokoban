@@ -8,34 +8,32 @@ import javax.swing.JLabel;
 import javax.swing.Timer;
 
 public class PlayKeyAdapter extends KeyAdapter {
-	private CheckCollision checkCollision;
 	private MyTimer time;
 	private Timer timer;
-	private BoardManager boardManager;
+	private GameManager gameManager;
 	private JLabel[] boomLabel;
 
 	private int mode;
 
-	public PlayKeyAdapter(MyTimer time, int mode, Timer timer, BoardManager boardManager, JLabel[] boomLabel) {
-		
+	public PlayKeyAdapter(MyTimer time, int mode, Timer timer, GameManager gameManager, JLabel[] boomLabel) {
 		this.time = time;
 		this.mode = mode;
 		this.timer = timer;
-		this.boardManager = boardManager;
-		this.checkCollision = new CheckCollision(boardManager);
+		this.gameManager = gameManager;
 		this.boomLabel = boomLabel;
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (boardManager.getIsCompleted()) { // 게임이 끝남.
+		if (gameManager.getIsCompleted()) { // 게임이 끝남.
 			return;
 		}
 
-		if (boardManager.getIsFailed()) {
+		if (gameManager.getIsFailed()) {
 			timer.stop();
 			return;
 		}
+		
 		if(boomLabel!=null) {
 			for(int i=0; i<boomLabel.length; i++) {
 				boomLabel[i].setVisible(false);
@@ -43,165 +41,180 @@ public class PlayKeyAdapter extends KeyAdapter {
 		}
 
 		int key = e.getKeyCode();
-		boardManager.setFlag(false);
-
-		if (key == KeyEvent.VK_LEFT) {
+		gameManager.setFlag(false);
+		
+		switch(key) {
+		case KeyEvent.VK_LEFT :
 			keyLeftPressed(e);
-		} else if (key == KeyEvent.VK_RIGHT) {
+			break;
+		case KeyEvent.VK_RIGHT :
 			keyRightPressed(e);
-		} else if (key == KeyEvent.VK_UP) {
+			break;
+		case KeyEvent.VK_UP :
 			keyUpPressed(e);
-		} else if (key == KeyEvent.VK_DOWN) {
+			break;
+		case KeyEvent.VK_DOWN :
 			keyDownPressed(e);
-		} else if (key == KeyEvent.VK_R) {
+			break;
+		case KeyEvent.VK_R :
 			keyReturnPressed(e);
-		} else if (key == KeyEvent.VK_BACK_SPACE) {
+			break;
+		case KeyEvent.VK_BACK_SPACE :
 			keyBackPressed(e);
+			break;
+		default :
+			break;
 		}
 		
+		
+		modeTwo();
+
+		gameManager.repaint();
+		return;
+	}
+	
+	private void modeTwo() {
 		if (mode == 2) {
 
-			for (int i = 0; i < boardManager.getWallsSize(); i++) {
+			for (int i = 0; i < gameManager.getWallsSize(); i++) {
 
-				Wall next = boardManager.getWalls(i);
+				Wall next = gameManager.getWalls(i);
 
-				if (next instanceof Llm && boardManager.getMoveCount() >= 1) {
+				if (next instanceof Llm && gameManager.getMoveCount() >= 1) {
 
 					((Llm) next).rellm();
 
 				}
 			}
-		} // 이부분까지 설정
-
-		boardManager.repaint();
-		return;
+		}
 	}
 
 	public void keyLeftPressed(KeyEvent e) {
 
-		if (checkCollision.checkWallCollision(boardManager.getSoko(), boardManager.LEFT_COLLISION)) { // soko객체 왼쪽에 벽이 있다면 움직이지 않고 키 이벤트를 끝냄
+		if (gameManager.getCheckWallCollision(gameManager.getSoko(), gameManager.LEFT_COLLISION)) { // soko객체 왼쪽에 벽이 있다면 움직이지 않고 키 이벤트를 끝냄
 			return;
 		}
 
-		if (checkCollision.checkBagCollision(boardManager.LEFT_COLLISION)) {
+		if (gameManager.getCheckBagCollision(gameManager.LEFT_COLLISION)) {
+			
 			return;
 		}
 
-		boardManager.getSoko().move(-boardManager.SPACE, 0); // 만약 위 상황을 만족하지 않는다면 왼쪽으로 한칸 움직임.
-		boardManager.getSoko().changePlayerVector(boardManager.LEFT_COLLISION);
-		boardManager.boardIncreaseMoveCount();
+		gameManager.getSoko().move(-gameManager.SPACE, 0); // 만약 위 상황을 만족하지 않는다면 왼쪽으로 한칸 움직임.
+		gameManager.getSoko().changePlayerVector(gameManager.LEFT_COLLISION);
+		gameManager.boardIncreaseMoveCount();
 
-		if (boardManager.getFlag()) {
-			if (!boardManager.getIsCollision()) {
-				boardManager.replayDequeOffer(5);
+		if (gameManager.getFlag()) {
+			if (!gameManager.getIsCollision()) {
+				gameManager.replayDequeOffer(5);
 			}
-			boardManager.setIsCollision(true);
+			gameManager.setIsCollision(true);
 		} else {
-			if (boardManager.getIsCollision()) {
-				boardManager.replayDequeOffer(6);
+			if (gameManager.getIsCollision()) {
+				gameManager.replayDequeOffer(6);
 			}
 
-			boardManager.setIsCollision(false);
+			gameManager.setIsCollision(false);
 		}
 
-		boardManager.replayDequeOffer(boardManager.LEFT_COLLISION);
+		gameManager.replayDequeOffer(gameManager.LEFT_COLLISION);
 
-		if (boardManager.getBags() != null) {
-			boardManager.isEntered(boardManager.getBags());
-			if (boardManager.getBags().getIsEntered()) {
-				boardManager.callIsCompleted();
-				boardManager.repaint();
+		if (gameManager.getBags() != null) {
+			gameManager.isEntered(gameManager.getBags());
+			if (gameManager.getBags().getIsEntered()) {
+				gameManager.callIsCompleted();
+				gameManager.repaint();
 				return;
 			}
 		}
 
 
 		
-		boardManager.callIsFailedDetected(boardManager.getBags());
+		gameManager.callIsFailedDetected(gameManager.getBags());
 		return;
 	}
 
 	public void keyRightPressed(KeyEvent e) {
-		if (checkCollision.checkWallCollision(boardManager.getSoko(), boardManager.RIGHT_COLLISION)) {
+		if (gameManager.getCheckWallCollision(gameManager.getSoko(), gameManager.RIGHT_COLLISION)) {
 			return;
 		}
 
-		if (checkCollision.checkBagCollision(boardManager.RIGHT_COLLISION)) {
+		if (gameManager.getCheckBagCollision(gameManager.RIGHT_COLLISION)) {
 			return;
 		}
 
-		boardManager.getSoko().move(boardManager.SPACE, 0);
-		boardManager.getSoko().changePlayerVector(boardManager.RIGHT_COLLISION);
-		boardManager.boardIncreaseMoveCount();
+		gameManager.getSoko().move(gameManager.SPACE, 0);
+		gameManager.getSoko().changePlayerVector(gameManager.RIGHT_COLLISION);
+		gameManager.boardIncreaseMoveCount();
 
-		if (boardManager.getFlag()) {
-			if (!boardManager.getIsCollision()) {
-				boardManager.replayDequeOffer(5);
+		if (gameManager.getFlag()) {
+			if (!gameManager.getIsCollision()) {
+				gameManager.replayDequeOffer(5);
 			}
-			boardManager.setIsCollision(true);
+			gameManager.setIsCollision(true);
 		} else {
-			if (boardManager.getIsCollision()) {
-				boardManager.replayDequeOffer(6);
+			if (gameManager.getIsCollision()) {
+				gameManager.replayDequeOffer(6);
 			}
 
-			boardManager.setIsCollision(false);
+			gameManager.setIsCollision(false);
 		}
 
-		boardManager.replayDequeOffer(boardManager.RIGHT_COLLISION);
+		gameManager.replayDequeOffer(gameManager.RIGHT_COLLISION);
 
-		if (boardManager.getBags() != null) {
-			boardManager.isEntered(boardManager.getBags());
-			if (boardManager.getBags().getIsEntered()) {
-				boardManager.callIsCompleted();
-				boardManager.repaint();
+		if (gameManager.getBags() != null) {
+			gameManager.isEntered(gameManager.getBags());
+			if (gameManager.getBags().getIsEntered()) {
+				gameManager.callIsCompleted();
+				gameManager.repaint();
 				return;
 			}
 		}
 		
-		boardManager.callIsFailedDetected(boardManager.getBags());
+		gameManager.callIsFailedDetected(gameManager.getBags());
 		
 		return;
 	}
 
 	public void keyUpPressed(KeyEvent e) {
 
-		if (checkCollision.checkWallCollision(boardManager.getSoko(), boardManager.TOP_COLLISION)) {
+		if (gameManager.getCheckWallCollision(gameManager.getSoko(), gameManager.TOP_COLLISION)) {
 			return;
 		}
 
-		if (checkCollision.checkBagCollision(boardManager.TOP_COLLISION)) {
+		if (gameManager.getCheckBagCollision(gameManager.TOP_COLLISION)) {
 			return;
 		}
 
-		boardManager.getSoko().move(0, -boardManager.SPACE);
-		boardManager.getSoko().changePlayerVector(boardManager.TOP_COLLISION);
-		boardManager.boardIncreaseMoveCount();
+		gameManager.getSoko().move(0, -gameManager.SPACE);
+		gameManager.getSoko().changePlayerVector(gameManager.TOP_COLLISION);
+		gameManager.boardIncreaseMoveCount();
 
-		if (boardManager.getFlag()) {
-			if (!boardManager.getIsCollision()) {
-				boardManager.replayDequeOffer(5);
+		if (gameManager.getFlag()) {
+			if (!gameManager.getIsCollision()) {
+				gameManager.replayDequeOffer(5);
 			}
-			boardManager.setIsCollision(true);
+			gameManager.setIsCollision(true);
 		} else {
-			if (boardManager.getIsCollision()) {
-				boardManager.replayDequeOffer(6);
+			if (gameManager.getIsCollision()) {
+				gameManager.replayDequeOffer(6);
 			}
 
-			boardManager.setIsCollision(false);
+			gameManager.setIsCollision(false);
 		}
 
-		boardManager.replayDequeOffer(boardManager.TOP_COLLISION);
+		gameManager.replayDequeOffer(gameManager.TOP_COLLISION);
 
-		if (boardManager.getBags() != null) {
-			boardManager.isEntered(boardManager.getBags());
-			if (boardManager.getBags().getIsEntered()) {
-				boardManager.callIsCompleted();
-				boardManager.repaint();
+		if (gameManager.getBags() != null) {
+			gameManager.isEntered(gameManager.getBags());
+			if (gameManager.getBags().getIsEntered()) {
+				gameManager.callIsCompleted();
+				gameManager.repaint();
 				return;
 			}
 		}
 		
-		boardManager.callIsFailedDetected(boardManager.getBags());
+		gameManager.callIsFailedDetected(gameManager.getBags());
 		
 		return;
 
@@ -209,43 +222,43 @@ public class PlayKeyAdapter extends KeyAdapter {
 
 	public void keyDownPressed(KeyEvent e) {
 
-		if (checkCollision.checkWallCollision(boardManager.getSoko(), boardManager.BOTTOM_COLLISION)) {
+		if (gameManager.getCheckWallCollision(gameManager.getSoko(), gameManager.BOTTOM_COLLISION)) {
 			return;
 		}
 
-		if (checkCollision.checkBagCollision(boardManager.BOTTOM_COLLISION)) {
+		if (gameManager.getCheckBagCollision(gameManager.BOTTOM_COLLISION)) {
 			return;
 		}
 
-		boardManager.getSoko().move(0, boardManager.SPACE);
-		boardManager.getSoko().changePlayerVector(boardManager.BOTTOM_COLLISION);
-		boardManager.boardIncreaseMoveCount();
+		gameManager.getSoko().move(0, gameManager.SPACE);
+		gameManager.getSoko().changePlayerVector(gameManager.BOTTOM_COLLISION);
+		gameManager.boardIncreaseMoveCount();
 
-		if (boardManager.getFlag()) {
-			if (!boardManager.getIsCollision()) {
-				boardManager.replayDequeOffer(5);
+		if (gameManager.getFlag()) {
+			if (!gameManager.getIsCollision()) {
+				gameManager.replayDequeOffer(5);
 			}
-			boardManager.setIsCollision(true);
+			gameManager.setIsCollision(true);
 		} else {
-			if (boardManager.getIsCollision()) {
-				boardManager.replayDequeOffer(6);
+			if (gameManager.getIsCollision()) {
+				gameManager.replayDequeOffer(6);
 			}
 
-			boardManager.setIsCollision(false);
+			gameManager.setIsCollision(false);
 		}
 
-		boardManager.replayDequeOffer(boardManager.BOTTOM_COLLISION);
+		gameManager.replayDequeOffer(gameManager.BOTTOM_COLLISION);
 
-		if (boardManager.getBags() != null) {
-			boardManager.isEntered(boardManager.getBags());
-			if (boardManager.getBags().getIsEntered()) {
-				boardManager.callIsCompleted();
-				boardManager.repaint();
+		if (gameManager.getBags() != null) {
+			gameManager.isEntered(gameManager.getBags());
+			if (gameManager.getBags().getIsEntered()) {
+				gameManager.callIsCompleted();
+				gameManager.repaint();
 				return;
 			}
 		}
 		
-		boardManager.callIsFailedDetected(boardManager.getBags());
+		gameManager.callIsFailedDetected(gameManager.getBags());
 		
 		return;
 	}
@@ -253,15 +266,15 @@ public class PlayKeyAdapter extends KeyAdapter {
 	public void keyReturnPressed(KeyEvent e) {
 
 		time.time = 0;
-		boardManager.restartLevel();
+		gameManager.restartLevel();
 		
 		return;
 	}
 
 	public void keyBackPressed(KeyEvent e) {
 
-		if (!boardManager.getReplayDequeEmpty()) {
-			boardManager.undo();
+		if (!gameManager.getReplayDequeEmpty()) {
+			gameManager.undo();
 		}
 	}
 }

@@ -6,21 +6,21 @@ import java.util.LinkedList;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-public class FailedDetected {
-	private BoardManager boardManager;
+public class DetectedIsFailed {
+	private GameManager gameManager;
 	private Deque<Integer> replay_Deque; 
 
-	public FailedDetected(BoardManager boardManager) {
-		this.boardManager = boardManager;
+	public DetectedIsFailed(GameManager gameManager) {
+		this.gameManager = gameManager;
 	}
 	
 	public void isFailed() {
 		
-		boardManager.setIsFailed(true);
+		gameManager.setIsFailed(true);
 		
-		if(boardManager.getIsFailed()) {
-			this.replay_Deque = boardManager.getReplayDeque();
-			boardManager.boardSetZeroMoveCount();
+		if(gameManager.getIsFailed()) {
+			this.replay_Deque = gameManager.getReplayDeque();
+			gameManager.boardSetZeroMoveCount();
 			String s = "Failed";
 			FileIO fileio = new FileIO();
 			if(replay_Deque!=null) {
@@ -30,14 +30,14 @@ public class FailedDetected {
 					fileio.enqueue(replay_Deque.poll());
 				}
 	
-				fileio.replayFileInput(boardManager.getLevelSelected(), s);
+				fileio.replayFileInput(gameManager.getLevelSelected(), s);
 			}
 			
 			ImageIcon failedImage = new ImageIcon("src/resources/Complete & Failed/Failed.png");
 			JLabel failedLabel = new JLabel(failedImage);
 			
-			boardManager.attachLabel(failedLabel);
-			failedLabel.setBounds(0, 0, boardManager.getwidth(), boardManager.getHeight());
+			gameManager.attachLabel(failedLabel);
+			failedLabel.setBounds(0, 0, gameManager.getwidth(), gameManager.getHeight());
 		}
 	}
 	
@@ -52,18 +52,18 @@ public class FailedDetected {
 	}
 	
 	private boolean wallTopBottomCollision(Baggage bag) {
-		if (boardManager.getCheckWallCollision(bag, boardManager.TOP_COLLISION) || boardManager.getCheckWallCollision(bag, boardManager.BOTTOM_COLLISION)) { // 위, 아래 벽 두개 // 리팩토링 완료
+		if (gameManager.getCheckWallCollision(bag, gameManager.TOP_COLLISION) || gameManager.getCheckWallCollision(bag, gameManager.BOTTOM_COLLISION)) { // 위, 아래 벽 두개 // 리팩토링 완료
 
-			for (int i = 0; i < boardManager.getWallsSize(); i++) {
-				Wall item1 = boardManager.getWalls(i); //item1 = 위에 있는 벽
+			for (int i = 0; i < gameManager.getWallsSize(); i++) {
+				Wall item1 = gameManager.getWalls(i); //item1 = 위에 있는 벽
 				if (bag.isTopCollision(item1) || bag.isBottomCollision(item1)) {
 
-					for (int j = 0; j < boardManager.getWallsSize(); j++) {
-						Wall item2 = boardManager.getWalls(j);
+					for (int j = 0; j < gameManager.getWallsSize(); j++) {
+						Wall item2 = gameManager.getWalls(j);
 						if (!item2.equals(item1) && item1.isLeftCollision(item2) || item1.isRightCollision(item2)) { // item2는 위의 양 옆의 벽
 
-							for (int k = 0; k < boardManager.getBaggsSize(); k++) {
-								Baggage item3 = boardManager.getBaggs(k);
+							for (int k = 0; k < gameManager.getBaggsSize(); k++) {
+								Baggage item3 = gameManager.getBaggs(k);
 								if (!item3.equals(bag) && item2.isBottomCollision(item3) || item2.isTopCollision(item3)) { // item3는 item2 아래의 bag
 									return true;
 								}
@@ -72,7 +72,7 @@ public class FailedDetected {
 					}
 				}
 			}
-			if (boardManager.getCheckWallCollision(bag, boardManager.LEFT_COLLISION) || boardManager.getCheckWallCollision(bag, boardManager.RIGHT_COLLISION)) {
+			if (gameManager.getCheckWallCollision(bag, gameManager.LEFT_COLLISION) || gameManager.getCheckWallCollision(bag, gameManager.RIGHT_COLLISION)) {
 				return true;
 			}
 		}
@@ -81,20 +81,20 @@ public class FailedDetected {
 	}
 	
 	private boolean wallLeftRightCollison(Baggage bag) {
-		if (boardManager.getCheckWallCollision(bag, boardManager.LEFT_COLLISION) || boardManager.getCheckWallCollision(bag, boardManager.RIGHT_COLLISION)) { // 왼, 오른쪽 벽 2개 리팩토링 끝
-			for (int i = 0; i < boardManager.getWallsSize(); i++) {
+		if (gameManager.getCheckWallCollision(bag, gameManager.LEFT_COLLISION) || gameManager.getCheckWallCollision(bag, gameManager.RIGHT_COLLISION)) { // 왼, 오른쪽 벽 2개 리팩토링 끝
+			for (int i = 0; i < gameManager.getWallsSize(); i++) {
 
-				Wall item1 = boardManager.getWalls(i);
+				Wall item1 = gameManager.getWalls(i);
 
 				if (bag.isLeftCollision(item1) || bag.isRightCollision(item1)) {
 
-					for (int j = 0; j < boardManager.getWallsSize(); j++) {
+					for (int j = 0; j < gameManager.getWallsSize(); j++) {
 
-						Wall item2 = boardManager.getWalls(j);
+						Wall item2 = gameManager.getWalls(j);
 
 						if (!item2.equals(item1) && item1.isTopCollision(item2) || item1.isBottomCollision(item2)) {
-							for (int k = 0; k < boardManager.getBaggsSize(); k++) {
-								Baggage item3 = boardManager.getBaggs(k);
+							for (int k = 0; k < gameManager.getBaggsSize(); k++) {
+								Baggage item3 = gameManager.getBaggs(k);
 								if (!item3.equals(bag) && item2.isRightCollision(item3)
 										|| item2.isLeftCollision(item3)) {
 									return true;
@@ -110,9 +110,9 @@ public class FailedDetected {
 	}
 	
 	private boolean oneWallTopOrBottom(Baggage bag) {
-		if (boardManager.getCheckWallCollision(bag, boardManager.TOP_COLLISION) || boardManager.getCheckWallCollision(bag, boardManager.BOTTOM_COLLISION)) { // 위에 벽 1개 , 아래 벽 1개 수정한거임 리팩토링
-			for (int i = 0; i < boardManager.getBaggsSize(); i++) {
-				Baggage item1 = boardManager.getBaggs(i);
+		if (gameManager.getCheckWallCollision(bag, gameManager.TOP_COLLISION) || gameManager.getCheckWallCollision(bag, gameManager.BOTTOM_COLLISION)) { // 위에 벽 1개 , 아래 벽 1개 수정한거임 리팩토링
+			for (int i = 0; i < gameManager.getBaggsSize(); i++) {
+				Baggage item1 = gameManager.getBaggs(i);
 				LeftRightBagCollision(bag, item1);
 			}
 		} //
@@ -122,8 +122,8 @@ public class FailedDetected {
 	
 	private boolean LeftRightBagCollision(Baggage bag, Baggage item) {
 		if(!item.equals(bag) && bag.isLeftCollision(item) || bag.isRightCollision(item)) {
-			for (int j = 0; j < boardManager.getWallsSize(); j++) {
-				Wall item2 = boardManager.getWalls(j);
+			for (int j = 0; j < gameManager.getWallsSize(); j++) {
+				Wall item2 = gameManager.getWalls(j);
 				wallBagTopBottomCollision(bag, item2);
 				
 			}
@@ -133,16 +133,16 @@ public class FailedDetected {
 	
 	private boolean wallBagTopBottomCollision(Baggage bag, Wall item) {
 		if (bag.isBottomCollision(item) || bag.isTopCollision(item)) { // item2는 bag객체 위나 아래의 벽
-			for (int k = 0; k < boardManager.getBaggsSize(); k++) {
-				Baggage item3 = boardManager.getBaggs(k);
+			for (int k = 0; k < gameManager.getBaggsSize(); k++) {
+				Baggage item3 = gameManager.getBaggs(k);
 				if (!item3.equals(item) && !item3.equals(bag)) { // item3는 item2(벽) 양 옆의 객체
 					if (item.isLeftCollision(item3) || item.isRightCollision(item3)) {
 						return true;
 					}
 					if (bag.isTopCollision(item) && item.isBottomCollision(item3)
 							|| bag.isBottomCollision(item) && item.isTopCollision(item3)) {
-						for (int h = 0; h < boardManager.getWallsSize(); h++) {
-							Wall item4 = boardManager.getWalls(h);
+						for (int h = 0; h < gameManager.getWallsSize(); h++) {
+							Wall item4 = gameManager.getWalls(h);
 							if (!item4.equals(item) && item3.isRightCollision(item4)
 									|| item3.isLeftCollision(item4)) {
 								return true;
@@ -156,11 +156,10 @@ public class FailedDetected {
 	}
 	
 	private boolean oneWallLeftOrRight(Baggage bag) {
-		if (boardManager.getCheckWallCollision(bag, boardManager.LEFT_COLLISION) || boardManager.getCheckWallCollision(bag, boardManager.RIGHT_COLLISION)) { 
-			for (int i = 0; i < boardManager.getBaggsSize(); i++) {
-				Baggage item1 = boardManager.getBaggs(i);
+		if (gameManager.getCheckWallCollision(bag, gameManager.LEFT_COLLISION) || gameManager.getCheckWallCollision(bag, gameManager.RIGHT_COLLISION)) { 
+			for (int i = 0; i < gameManager.getBaggsSize(); i++) {
+				Baggage item1 = gameManager.getBaggs(i);
 				topBottomBagCollosion(bag, item1);
-				
 			}
 		}
 		
@@ -170,8 +169,8 @@ public class FailedDetected {
 	private boolean topBottomBagCollosion(Baggage bag, Baggage item) {
 		if (!item.equals(bag) && bag.isTopCollision(item) || bag.isBottomCollision(item)) { //item1은 bag 왼쪽 벽
 
-			for (int j = 0; j < boardManager.getWallsSize(); j++) {
-				Wall item2 =  boardManager.getWalls(j);
+			for (int j = 0; j < gameManager.getWallsSize(); j++) {
+				Wall item2 =  gameManager.getWalls(j);
 				wallBagLeftRightCollison(bag, item2);
 			}
 		}
@@ -179,9 +178,9 @@ public class FailedDetected {
 	}
 	
 	private boolean wallBagLeftRightCollison(Baggage bag, Wall item) {
-		if (bag.isRightCollision(item) || bag.isBottomCollision(item)) { //item2는 
-			for (int k = 0; k < boardManager.getBaggsSize(); k++) {
-				Baggage item3 = boardManager.getBaggs(k);
+		if (bag.isRightCollision(item) || bag.isBottomCollision(item)) { 
+			for (int k = 0; k < gameManager.getBaggsSize(); k++) {
+				Baggage item3 = gameManager.getBaggs(k);
 
 				if (!item3.equals(item) && !item3.equals(bag)) {
 					if (item.isTopCollision(item3) || item.isRightCollision(item3)) {
@@ -190,8 +189,8 @@ public class FailedDetected {
 
 					if (bag.isRightCollision(item) && item.isLeftCollision(item3)
 							|| bag.isLeftCollision(item) && item.isRightCollision(item3)) {
-						for (int h = 0; h <  boardManager.getWallsSize(); h++) {
-							Wall item4 = boardManager.getWalls(h);
+						for (int h = 0; h <  gameManager.getWallsSize(); h++) {
+							Wall item4 = gameManager.getWalls(h);
 							if (!item4.equals(item) && item3.isTopCollision(item4)
 									|| item3.isBottomCollision(item4)) {
 								return true;
@@ -206,21 +205,21 @@ public class FailedDetected {
 	}
 	
 	private boolean topBag(Baggage bag) {
-		for (int i = 0; i < boardManager.getBaggsSize(); i++) { // 4개다 bag일때
-			Baggage item1 = boardManager.getBaggs(i);
+		for (int i = 0; i < gameManager.getBaggsSize(); i++) { // 4개다 bag일때
+			Baggage item1 = gameManager.getBaggs(i);
 			if (!item1.equals(bag) && bag.isTopCollision(item1)) {
 
-				for (int j = 0; j < boardManager.getBaggsSize(); j++) {
+				for (int j = 0; j < gameManager.getBaggsSize(); j++) {
 
-					Baggage item2 =boardManager.getBaggs(j);
+					Baggage item2 =gameManager.getBaggs(j);
 
 					if (!item2.equals(item1) && !item2.equals(bag)) {
 
 						if (item1.isLeftCollision(item2) || item1.isRightCollision(item2)) {
 
-							for (int k = 0; k < boardManager.getBaggsSize(); k++) {
+							for (int k = 0; k < gameManager.getBaggsSize(); k++) {
 
-								Baggage item3 = boardManager.getBaggs(k);
+								Baggage item3 = gameManager.getBaggs(k);
 
 								if (item2.isBottomCollision(item3)) {
 									return true;
@@ -236,21 +235,21 @@ public class FailedDetected {
 	}
 	
 	private boolean bottomBag(Baggage bag) {
-		for (int i = 0; i < boardManager.getBaggsSize(); i++) { // 4개다 bag일때
-			Baggage item1 = boardManager.getBaggs(i);
+		for (int i = 0; i < gameManager.getBaggsSize(); i++) { // 4개다 bag일때
+			Baggage item1 = gameManager.getBaggs(i);
 			if (!item1.equals(bag) && bag.isBottomCollision(item1)) {
 
-				for (int j = 0; j < boardManager.getBaggsSize(); j++) {
+				for (int j = 0; j < gameManager.getBaggsSize(); j++) {
 
-					Baggage item2 = boardManager.getBaggs(j);
+					Baggage item2 = gameManager.getBaggs(j);
 
 					if (!item2.equals(item1) && !item2.equals(bag)) {
 
 						if (item1.isLeftCollision(item2) || item1.isRightCollision(item2)) {
 
-							for (int k = 0; k < boardManager.getBaggsSize(); k++) {
+							for (int k = 0; k < gameManager.getBaggsSize(); k++) {
 
-								Baggage item3 = boardManager.getBaggs(k);
+								Baggage item3 = gameManager.getBaggs(k);
 
 								if (item2.isTopCollision(item3)) {
 									return true;
