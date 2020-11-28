@@ -6,17 +6,15 @@ import java.util.*;
 public class Replay {
 	private Deque<Integer> replay_Deque = new LinkedList<>();
 	private Stack<Integer> replay_Stack = new Stack<>();
-	private File file;
 
 	private boolean undo = false;
 	private BoardManager boardManager;
 
 	private int backCounter = 0;
 	
-	Replay(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, String selectCharacter){
+	Replay(int levelSelected, File file, String selectCharacter, BoardManager boardManager){
 		replay_Deque = new LinkedList<>();
-		
-		this.file = file;
+		this.boardManager = boardManager;
 		
 		try {
 			FileReader fr = new FileReader(file);
@@ -300,9 +298,5 @@ public class Replay {
 	
 	public void offerReplay_Deque(int key) {
 		replay_Deque.offer(key);
-	}
-	
-	public void setBoardManager(BoardManager boardManager) {
-		this.boardManager = boardManager;
 	}
 }

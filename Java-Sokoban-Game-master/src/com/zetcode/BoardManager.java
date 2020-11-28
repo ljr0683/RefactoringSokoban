@@ -52,9 +52,8 @@ public class BoardManager {
 		frame.changePanel(board, width, height);
 	}
 	
-	public BoardManager(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, Replay replay, String selectCharacter) {
-		this.replay = replay;
-		replay.setBoardManager(this);
+	public BoardManager(int levelSelected, LevelSelectPanel previousPanel, UIManager frame, File file, String selectCharacter) {
+		this.replay = new Replay(levelSelected, file, selectCharacter, this);
 		board = new Board(levelSelected, file, replay, selectCharacter, this);
 		System.out.println(replay);
 		isReplay = true;
