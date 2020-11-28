@@ -78,7 +78,7 @@ public class DetectedIsCompleted {
 			scoreLabel.setFont(scoreFont);
 			
 			gameManager.attachLabel(completeLabel);
-			completeLabel.setBounds(0, 0, gameManager.getwidth(), gameManager.getHeight());
+			completeLabel.setBounds(0, 0, gameManager.getWidth(), gameManager.getHeight());
 			
 			attachLabel(scoreLabel);
 			

@@ -135,7 +135,7 @@ public class GameManager {
 		return flag;
 	}
 	
-	public int getwidth() {
+	public int getWidth() {
 		return width;
 	}
 	
@@ -226,6 +226,8 @@ public class GameManager {
 	}
 	
 	public void restartLevel() {
+		isCompleted = false;
+		isFailed = false;
 		board.setZeroMoveCount();
 		board.restartLevel();
 	}

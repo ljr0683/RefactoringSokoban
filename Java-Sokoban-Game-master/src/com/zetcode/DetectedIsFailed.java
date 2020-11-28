@@ -37,7 +37,7 @@ public class DetectedIsFailed {
 			JLabel failedLabel = new JLabel(failedImage);
 			
 			gameManager.attachLabel(failedLabel);
-			failedLabel.setBounds(0, 0, gameManager.getwidth(), gameManager.getHeight());
+			failedLabel.setBounds(0, 0, gameManager.getWidth(), gameManager.getHeight());
 		}
 	}
 	

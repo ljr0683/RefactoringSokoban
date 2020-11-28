@@ -309,9 +309,6 @@ public class Board extends JPanel {
 		walls.clear();
 
 		initWorld();
-
-		gameManager.setIsCompleted(false);
-		gameManager.setIsFailed(false);
 	}
 	public void setZeroMoveCount() {
 		this.moveCount=0;
