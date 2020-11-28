@@ -32,6 +32,8 @@ public class Replay {
 	}
 	
 	Replay(GameManager gameManager){
+		replay_Deque = new LinkedList<>();
+		replay_Stack = new Stack<>();
 		this.gameManager=gameManager;
 		undo = true;
 	}

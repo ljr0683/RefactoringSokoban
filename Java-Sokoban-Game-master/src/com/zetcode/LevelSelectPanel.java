@@ -16,21 +16,15 @@ public class LevelSelectPanel extends JPanel {
 	private JLabel backSpaceLabel;
 	private ImageIcon backGroundImage;
 	private JLabel scoreLabel;
-	private JLabel notExitsReplayLabel;
 	
 	ImageIcon randomStartIcon ;
 	ImageIcon startIcon ;
 	
-	private File file;
-	
 	private UIManager frame;
 	private SelectCharacterPanel previousPanel;
 	private LevelSelectPanel panel;
-
-	private GameManager gameManager;
 	
 	private int levelSelected;
-	private int score;
 	
 	public LevelSelectPanel(UIManager frame, SelectCharacterPanel previousPanel, int levelSelected, String selectCharacter) {
 		setLayout(null);
@@ -46,21 +40,19 @@ public class LevelSelectPanel extends JPanel {
 		
 		readScoreFile();
 		
-		setLabel();
-		
 		addItemToPanel();
 		
 		setLabelBound();
 		
 		addListener();
-		
-		notExitsReplayLabel.setVisible(false);
 	}
 	
 	private void readScoreFile() {
 		File scoreFile = new File("src/score/score_"+levelSelected+".txt");
+		int score;
 		if(!scoreFile.exists()) {
 			score = 0;
+			setLabel(score);
 		}
 		else {
 			try {
@@ -72,14 +64,14 @@ public class LevelSelectPanel extends JPanel {
 				}while((bufReader.readLine()) != null);
 				
 				score = Integer.parseInt(stringScore);
-				
+				setLabel(score);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	private void setLabel() {
+	private void setLabel(int score) {
 		ImageIcon backSpaceIcon = new ImageIcon("src/resources/BackSpace/BackSpace.png");
 		ImageIcon completedIcon = new ImageIcon("src/resources/GameStartImage/Completed.png");
 		ImageIcon failedIcon = new ImageIcon("src/resources/GameStartImage/Failed.png");
@@ -89,14 +81,9 @@ public class LevelSelectPanel extends JPanel {
 		failedReplayLabel = new JLabel(failedIcon);
 		backSpaceLabel = new JLabel(backSpaceIcon);
 		backGroundImage = new ImageIcon("src/resources/Background/DefaultBackground.png");
-		
 		Font scoreFont = new Font("배달의민족 도현", Font.BOLD, 50);
 		scoreLabel = new JLabel("BestScore : "+score);
 		scoreLabel.setFont(scoreFont);
-		
-		Font replayFileNotExitsFont = new Font("배달의 민족 도현", Font.BOLD, 50);
-		notExitsReplayLabel = new JLabel("Replay File Not Exits");
-		notExitsReplayLabel.setFont(replayFileNotExitsFont);
 	}
 	
 	private void setLabelBound() {
@@ -106,8 +93,6 @@ public class LevelSelectPanel extends JPanel {
 		startLabel.setBounds(800, 700, 96, 96);
 		randomStartLabel.setBounds(1000, 700, 96, 96);
 		scoreLabel.setBounds(530, 150, 500, 60);
-		notExitsReplayLabel.setBounds(500, 250, 700, 200);
-		notExitsReplayLabel.setForeground(new Color(255, 0, 0));
 	}
 	
 	private void addItemToPanel() {
@@ -117,7 +102,6 @@ public class LevelSelectPanel extends JPanel {
 		add(startLabel);
 		add(randomStartLabel);
 		add(scoreLabel);
-		add(notExitsReplayLabel);
 	}
 	
 	private void addListener() {
@@ -142,17 +126,15 @@ public class LevelSelectPanel extends JPanel {
 			}
 			
 			if(la.equals(startLabel)) {
-				gameManager = new GameManager(levelSelected, panel, frame, selectCharacter, 0);
+				GameManager gameManager = new GameManager(levelSelected, panel, frame, selectCharacter, 0);
 				startLabel.setIcon(startIcon);
-				notExitsReplayLabel.setVisible(false);
 			}
 			
 			if(la.equals(randomStartLabel)) {
 				Random rand = new Random(System.currentTimeMillis());
 				int mode = rand.nextInt(5);
-				gameManager = new GameManager(levelSelected, panel, frame, selectCharacter, mode);
+				GameManager gameManager = new GameManager(levelSelected, panel, frame, selectCharacter, mode);
 				randomStartLabel.setIcon(randomStartIcon);
-				notExitsReplayLabel.setVisible(false);
 			}
 			
 			if(la.equals(completedReplayLabel)) {
@@ -185,13 +167,22 @@ public class LevelSelectPanel extends JPanel {
 		}
 	}
 	
-	public void replayFileReadAndStart(String s) {
+	private void replayFileReadAndStart(String s) {
 		String filePath = "src\\replay\\"+s+"_replay_"+levelSelected+".txt";
-		file = new File(filePath);
+		File file = new File(filePath);
 		
+		Font replayFileNotExitsFont = new Font("배달의 민족 도현", Font.BOLD, 50);
+		JLabel notExitsReplayLabel = new JLabel("Replay File Not Exits");
+		notExitsReplayLabel.setFont(replayFileNotExitsFont);
+		
+		notExitsReplayLabel.setBounds(500, 250, 700, 200);
+		notExitsReplayLabel.setForeground(new Color(255, 0, 0));
+		
+		add(notExitsReplayLabel);
+		notExitsReplayLabel.setVisible(false);
 		if(file.exists()) {
 			notExitsReplayLabel.setVisible(false);
-			gameManager = new GameManager(levelSelected, panel, frame, file, selectCharacter);
+			GameManager gameManager = new GameManager(levelSelected, panel, frame, file, selectCharacter);
 		}
 		else {
 			notExitsReplayLabel.setVisible(true);
