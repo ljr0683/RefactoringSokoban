@@ -23,7 +23,6 @@ public class Replay {
 			while((c = fr.read()) != -1) {
 				replay_Deque.offer(c-48);
 			}
-			System.out.println(replay_Deque);
 			fr.close();
 		}catch(IOException e) {
 			e.printStackTrace();

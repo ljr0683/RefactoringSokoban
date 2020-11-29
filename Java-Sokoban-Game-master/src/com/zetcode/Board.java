@@ -209,8 +209,6 @@ public class Board extends JPanel {
 			g.setColor(new Color(250, 240, 170));
 		}	
 		
-		g.fillRect(0, 0, this.getWidth(), this.getHeight());
-		
 		ArrayList<Actor> world = new ArrayList<>();
 
 		world.addAll(walls);
